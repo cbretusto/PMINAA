@@ -2,7 +2,8 @@
 
 namespace App\Services;
 
-// use Illuminate\Support\Collection;3
+// use Illuminate\Support\Collection;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 use Yajra\DataTables\Facades\DataTables;
@@ -288,10 +289,17 @@ class PminaaRequestService
                 $result .= '</center>';
                 return $result;
             })
+
+            ->addColumn('activation_date', function ($pminaa_detail) {
+                $date = $pminaa_detail->approvers_info[0]->iss_hardware_approved_by_date ?? null;
+
+                return $date ? Carbon::parse($date)->format('F Y') : '';
+            })
             ->rawColumns([
                 'action',
                 'full_name',
                 'approvers',
+                'activation_date'
             ])
             ->make(true);
     }

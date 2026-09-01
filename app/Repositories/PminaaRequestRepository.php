@@ -305,14 +305,18 @@ class PminaaRequestRepository implements PminaaRequestInterface
 
         // dd($controlNo);
         if (empty($pminaaId)) {
-            $getControlNo = $controlNo;
-            $pminaaData['control_no'] = $getControlNo;
-            $pminaaData['created_at'] = now();
-            $getPminaaId = PminaaDetails::insertGetId($pminaaData);
+            if(empty($controlNo)) {
+                return '123';
+            }else{
+                $getControlNo = $controlNo;
+                $pminaaData['control_no'] = $getControlNo;
+                $pminaaData['created_at'] = now();
+                $getPminaaId = PminaaDetails::insertGetId($pminaaData);
 
-            $approverData['pminaa_details_id']  = $getPminaaId;
-            $approverData['created_at']         = now();
-            PminaaApprover::insert($approverData);
+                $approverData['pminaa_details_id']  = $getPminaaId;
+                $approverData['created_at']         = now();
+                PminaaApprover::insert($approverData);
+            }
         }
         else {
             $pminaaData['updated_at'] = now();
@@ -515,7 +519,6 @@ class PminaaRequestRepository implements PminaaRequestInterface
 
             if($approvalStatus == 5){
                 $this->mapCreationOfSystemModule($systemModules, $employee_details, $rapidx_user_id);
-
             }
 
             PminaaApprover::where('pminaa_details_id', $pminaaId)

@@ -30,7 +30,7 @@
 @section('content_page')
     <style type="text/css">
         table.table thead th{
-            text-align: center;
+            text-align: center !important;
             vertical-align: middle;
         }
 
@@ -121,6 +121,7 @@
                                         <th>User Type</th>
                                         <th>Requested By</th>
                                         <th>Approvers</th>
+                                        <th>Activation Date</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -663,13 +664,20 @@
                     { "data" : "user_type"},
                     { "data" : "requested_by"},
                     { "data" : "approvers"},
+                    { "data" : "activation_date"},
                 ],
+
                 "columnDefs": [
                     {
-                        "targets": [3, 8],
+                        "targets": "_all",
                         "className": "text-start"
                     }
-                ]
+                ],
+                drawCallback: function () {
+                    const table = this.api();
+
+                    table.column(13).visible(status === 'approved');
+                }
             });
 
             // -------------------------------------------------------------------------------------------------------------------------------------
@@ -736,6 +744,10 @@
 
                     if(!$('#txtEmployeeLastName').val()){
                         errors["txtEmployeeLastName"] = "Last Name is required.";
+                    }
+
+                    if(!$('#txtEmployeeMiddleName').val()){
+                        errors["txtEmployeeMiddleName"] = "Middle Name is required.";
                     }
 
                     if(!$('#slctSectionHeadApprover').val()){
@@ -1078,8 +1090,15 @@
                 //     alert("Please add at least one Folder Access before submitting.");
                 //     return false;
                 // }else{
-                    CreateUpdatePminaaRequest();
+                //     CreateUpdatePminaaRequest();
                 // }
+
+                if(sessionCheck == ''){
+                    alert('Session expired!')
+                    window.location.reload();
+                }else{
+                    CreateUpdatePminaaRequest();
+                }
             });
 
             // -------------------------------------------------------------------------------------------------------------------------------------
@@ -1109,7 +1128,13 @@
 
             $("#formPminaaRequestApproval").submit(function(event){
                 event.preventDefault();
-                PminaaRequestChangeApprovalStatus();
+
+                if(sessionCheck == ''){
+                    alert('Session expired!')
+                    window.location.reload();
+                }else{
+                    PminaaRequestChangeApprovalStatus();
+                }
             });
         });
     </script>
