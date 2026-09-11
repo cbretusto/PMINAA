@@ -30,6 +30,7 @@
                     </p>
 
                     <p style="margin-top:15px; font-size:14px; color:#fff;">
+                        📝 <strong> {{ $remark }} </strong><br>
                         📅 {{ \Carbon\Carbon::now()->toFormattedDateString() }}<br>
                         🕒 {{ \Carbon\Carbon::now()->isoFormat('LT') }}
                     </p>

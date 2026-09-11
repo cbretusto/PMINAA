@@ -115,9 +115,7 @@ class PminaaRequestService
         ->values();
 
         return DataTables::of($pminaa_details)
-            ->addColumn(
-                'action',
-                function ($pminaa_detail) use ( $rapidx_user_id, $steps, $approve_values, $disapprove_values, $pminaa_access_for_conformance, $conformanceApprovalIds ){
+            ->addColumn('action',function ($pminaa_detail) use ( $rapidx_user_id, $steps, $approve_values, $disapprove_values, $pminaa_access_for_conformance, $conformanceApprovalIds ){
                     $btns = '<center>';
                     $btns .= '
                         <a
@@ -304,223 +302,6 @@ class PminaaRequestService
             ->make(true);
     }
 
-    // AUGUST 18, 2026
-    // public function getPminaaRequestForDataTableService($request){
-    //     session_start();
-    //     $rapidx_user_id = $_SESSION['rapidx_user_id'];
-    //     $rapidx_department_id = $_SESSION['rapidx_department_id'];
-    //     $pminaa_access_for_conformance = $_SESSION["pminaa_request_access_for_conformance"];
-    //     $steps = [
-    //         'section_head'      => 'Checked By',
-    //         'department_head'   => 'Checked By',
-    //         'iss_manager'       => 'Noted By',
-    //         'admin_avp'         => 'Approved By',
-    //         'iss_hardware'      => 'Conformed By',
-    //     ];
-
-    //     $approve_values = [
-    //         'section_head'      => '0',
-    //         'department_head'   => '1',
-    //         'iss_manager'       => '2',
-    //         'admin_avp'         => '3',
-    //         'iss_hardware'      => '4',
-    //     ];
-
-    //     $disapprove_values = [
-    //         'section_head'      => '6',
-    //         'department_head'   => '7',
-    //         'iss_manager'       => '8',
-    //         'admin_avp'         => '9',
-    //         'iss_hardware'      => '10',
-    //     ];
-
-    //     $conformance_approval = $this->pminaaRequestInterfaceInterface->getConformanceApprovalRepository();
-    //     $conformanceApprovalIds = $conformance_approval->pluck('rapidx_user_id')->toArray();
-    //     $pminaa_details = $this->pminaaRequestInterfaceInterface->getAllPminaaRequestDataRepository($request, $rapidx_user_id, $rapidx_department_id, $conformanceApprovalIds);
-
-    //     return DataTables::of($pminaa_details)
-    //     ->addColumn('action', function ($pminaa_detail) use ($rapidx_user_id, $steps, $approve_values, $disapprove_values, $pminaa_access_for_conformance, $conformanceApprovalIds) {
-    //         $btns = '<center>';
-
-    //         $btns .= '<a  href="view_pdf_pminaa_request/' . $pminaa_detail->id . '" target="_blank"
-    //                             class="btn btn-warning btn-sm mb-2 w-100"
-    //                             target="_blank"
-    //                             title="View PMINAA Request">
-    //                             <i class="fa fa-eye"></i>
-    //                         </a>';
-
-    //         // --------------------------- UPDATE / CHANGE STATUS BUTTONS ---------------------------
-    //         if($rapidx_user_id == $pminaa_detail->requested_by && $pminaa_detail->approval_status != 5){
-    //             if($pminaa_detail->status == 0){
-    //                 $btns .=
-    //                     '<button type="button"
-    //                         class="btn btn-dark btn-sm actionUpdatePminaaRequest w-100 mb-3"
-    //                         pminaa_details-id="' . $pminaa_detail->id . '"
-    //                         data-bs-toggle="modal"
-    //                         data-bs-target="#modalCreateUpdatePminaaRequest"
-    //                         title="Update PMINAA Request">
-    //                         <i class="fas fa-edit"></i>
-    //                     </button>&nbsp;';
-
-    //                 // $btns .=
-    //                 //     '<button type="button"
-    //                 //         class="btn btn-danger btn-sm actionPminaaRequestChangeStatus mb-3"
-    //                 //         pminaa_details-id="' . $pminaa_detail->id . '"
-    //                 //         status="1"
-    //                 //         data-bs-toggle="modal"
-    //                 //         data-bs-target="#modalPminaaRequestChangeUserStatus"
-    //                 //         title="Deactivate Request">
-    //                 //         <i class="fas fa-power-off"></i>
-    //                 //     </button>';
-    //             }else{
-    //                 // $btns .=
-    //                 //     '<button type="button"
-    //                 //         class="btn btn-warning btn-sm actionPminaaRequestChangeStatus mb-3"
-    //                 //         pminaa_details-id="' . $pminaa_detail->id . '"
-    //                 //         status="0"
-    //                 //         data-bs-toggle="modal"
-    //                 //         data-bs-target="#modalPminaaRequestChangeUserStatus"
-    //                 //         title="Activate Request">
-    //                 //         <i class="fa-solid fa-arrow-rotate-right"></i>
-    //                 //     </button>';
-    //             }
-    //         }
-
-    //         $btns .= "<br>";
-    //         // --------------------------- APPROVE/DISAPPROVE BUTTONS ---------------------------
-    //         // $status = $pminaa_detail->approval_status + 1;
-    //         $currentStepKey = null;
-    //         $ApproveVal = null;
-    //         $DisapproveVal = null;
-    //         foreach ($approve_values as $key => $val) {
-    //             if ($pminaa_detail->approval_status == $val) {
-    //                 $currentStepKey = $key;
-    //                 $ApproveVal = $val + 1;
-    //                 $DisapproveVal = $disapprove_values[$key];
-    //                 break;
-    //             }
-    //         }
-
-    //         if ($currentStepKey && $pminaa_detail->status == 0) {
-    //             $currentApproverId = $pminaa_detail->approvers_info[0]->{$currentStepKey} ?? null;
-    //             $canApprove =
-    //                 ($currentApproverId == $rapidx_user_id && $pminaa_detail->approval_status <= 3)
-    //                 ||
-    //                 ( $pminaa_detail->approval_status == 4 && in_array($rapidx_user_id, $conformanceApprovalIds) && $pminaa_access_for_conformance == 1);
-
-    //             if ($canApprove) {
-    //                 $btns .= '
-    //                     <button type="button"
-    //                         class="btn btn-success btn-sm actionPminaaRequestApprovalButton w-100 mb-2"
-    //                         pminaa_details-id="' . $pminaa_detail->id . '"
-    //                         pminaa_details-approval_status="' . $currentStepKey . '"
-    //                         approval-status="' . $ApproveVal . '"
-    //                         value="approve"
-    //                         data-bs-toggle="modal"
-    //                         data-bs-target="#modalPminaaRequestApproval"
-    //                         title="Approve">
-    //                         <i class="fa-solid fa-thumbs-up"></i>
-    //                     </button>';
-
-    //                 $btns .= '
-    //                     <button type="button"
-    //                         class="btn btn-danger btn-sm actionPminaaRequestApprovalButton w-100"
-    //                         pminaa_details-id="' . $pminaa_detail->id . '"
-    //                         pminaa_details-approval_status="' . $currentStepKey . '"
-    //                         approval-status="' . $DisapproveVal . '"
-    //                         value="disapprove"
-    //                         data-bs-toggle="modal"
-    //                         data-bs-target="#modalPminaaRequestApproval"
-    //                         title="Disapprove">
-    //                         <i class="fa-solid fa-thumbs-down"></i>
-    //                     </button>';
-    //             }
-    //         }
-
-    //         $btns .= '</center>';
-    //         return $btns;
-    //     })
-
-    //     ->addColumn('created_at', function ($pminaa_detail) {
-    //         $result = '';
-    //         $result .= $pminaa_detail->created_at ? $pminaa_detail->created_at->format('F d, Y') : '';
-    //         return $result;
-    //     })
-
-    //     ->addColumn('full_name', function ($pminaa_detail) {
-    //         $result = '';
-    //         $result .=
-    //             ($pminaa_detail->employee_name ? $pminaa_detail->employee_name : '') . ' ' .
-    //             ($pminaa_detail->employee_lastname ? $pminaa_detail->employee_lastname : '');
-    //         return $result;
-    //     })
-
-    //     ->addColumn('factory', function ($pminaa_detail) {
-    //         $result = '';
-    //         $result .= 'Factory '.$pminaa_detail->factory ?? '';
-    //         return $result;
-    //     })
-
-    //     ->addColumn('requested_by', function ($pminaa_detail) {
-    //         $result = '';
-    //         $result .= $pminaa_detail->rapidx_user_info->name ?? '';
-    //         return $result;
-    //     })
-
-    //     ->addColumn('approvers', function ($pminaa_detail) use ($steps, $approve_values, $disapprove_values) {
-    //         $step_keys = array_keys($steps);
-    //         $approval_status = $pminaa_detail->approval_status;
-    //         $approvers = $pminaa_detail->approvers_info;
-    //         $result = '<center>';
-
-    //         if (!empty($approvers)) {
-    //             $approvers = $approvers[0];
-    //         } else {
-    //             return '<center>No Approvers</center>';
-    //         }
-
-    //         $currentStepKey = null;
-    //         foreach ($approve_values as $key => $val) {
-    //             if ($approval_status <= $val) {
-    //                 $currentStepKey = $key;
-    //                 break;
-    //             }
-    //         }
-
-    //         foreach ($step_keys as $key) {
-    //             $obj            = $approvers->{$key . '_info'} ?? null;
-    //             $name           = $obj ? $obj->name : 'ISS Hardware';
-    //             $date           = $approvers->{$key . '_approved_by_date'} ?? null;
-    //             $remark         = $approvers->{$key . '_approved_by_remark'} ?? null;
-    //             $personBadge    = 'bg-light text-black';
-
-    //             if($approval_status == $disapprove_values[$key]){
-    //                 $personBadge = 'bg-danger text-white';
-    //             }elseif($approval_status > $approve_values[$key] && $approval_status < 6){
-    //                 $personBadge = 'bg-success text-white';
-    //             }elseif($key === $currentStepKey){
-    //                 $personBadge = 'bg-warning text-black';
-    //             }
-
-    //             $result .= '<span class="badge ' . $personBadge . '">' . $name . '</span><br>';
-
-    //             if(!empty($date)){
-    //                 $result .= '<small>' . $date . '</small><br>';
-    //             }
-
-    //             if(!empty($remark)){
-    //                 $result .= '<strong>Remark:</strong> ' . $remark . '<br>';
-    //             }
-    //         }
-
-    //         $result .= '</center>';
-    //         return $result;
-    //     })
-
-    //     ->rawColumns(['action','full_name','approvers'])
-    //     ->make(true);
-    // }
-
     public function getSystemonePmiSubconEmployeeService($user_type){
         return $this->pminaaRequestInterfaceInterface->getSystemonePmiSubconEmployeeRepository($user_type);
     }
@@ -541,20 +322,34 @@ class PminaaRequestService
         return $this->pminaaRequestInterfaceInterface->getAccountSystemFolderNameRepository($get_access_id, $get_system_module);
     }
 
-    public function createUpdatePminaaRequestService(?string $pminaaId, array $data): array{
+    public function createUpdatePminaaRequestService( ?string $pminaaId, array $data ): array {
         session_start();
+
         $rapidx_user_id = $_SESSION['rapidx_user_id'];
 
-        return DB::transaction(function () use ($pminaaId, $data, $rapidx_user_id) {
-            // if ($this->pminaaRequestInterfaceInterface->existsPminaaRequestRepository(['id' => $data['pminaa_id'], 'logdel' => 0], $pminaaId)) {
-            //     return ['hasError' => 1, 'message' => 'Request already exists'];
-            // }
+        return DB::transaction(function () use ( $pminaaId, $data, $rapidx_user_id) {
 
-            $this->pminaaRequestInterfaceInterface->createUpdatePminaaRequestRepository($pminaaId, $data, $rapidx_user_id);
+            $result = $this->pminaaRequestInterfaceInterface
+                ->createUpdatePminaaRequestRepository(
+                    $pminaaId,
+                    $data,
+                    $rapidx_user_id
+                );
 
-            return ['hasError' => 0];
+            if ($result === false) {
+                return [
+                    'hasError' => 1,
+                    'message' => 'Saving failed because control number is empty.'
+                ];
+            }
+
+            return [
+                'hasError' => 0,
+                'message' => 'Successfully saved.'
+            ];
         }, 5);
     }
+
 
     public function getPminaaRequestInfoByIdService($pminaaId){
         return $this->pminaaRequestInterfaceInterface->getPminaaRequestInfoByIdRepository($pminaaId);
@@ -572,5 +367,19 @@ class PminaaRequestService
 
     public function viewPdfPminaaRequestService($id){
         return $this->pminaaRequestInterfaceInterface->viewPdfPminaaRequestRepository($id);
+    }
+
+    public function approveAllPendingRequestsService($presidentApproval){
+        return DB::transaction(function () use ($presidentApproval) {
+
+            $result = $this->pminaaRequestInterfaceInterface
+                ->approveAllPendingRequestsRepository($presidentApproval);
+
+            return [
+                'hasError' => 0,
+                'hasPendingRequests' => $result['hasPendingRequests'] ?? 0,
+            ];
+
+        }, 5);
     }
 }

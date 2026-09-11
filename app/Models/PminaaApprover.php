@@ -6,12 +6,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Models\RapidxUser;
+use App\Models\PminaaDetails;
 
 class PminaaApprover extends Model
 {
     protected $table = 'pminaa_approvers';
     protected $connection = 'mysql';
-
+    protected $fillable = [
+            'section_head_approved_by_date',
+            'department_head_approved_by_date'
+        ];
     public function section_head_info(){
         return $this->hasOne(RapidxUser::class, 'id', 'section_head');
     }
@@ -26,5 +30,8 @@ class PminaaApprover extends Model
     }
     public function iss_hardware_info(){
         return $this->hasOne(RapidxUser::class, 'id', 'iss_hardware');
+    }
+    public function pminaa_info(){
+        return $this->hasOne(PminaaDetails::class, 'id', 'pminaa_details_id');
     }
 }

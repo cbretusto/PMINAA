@@ -10,6 +10,7 @@ class SystemOneAclUser extends Model
 {
     protected $table = "tbl_useraccnt";
     protected $connection = "mysql_systemone_module";
+    public $timestamps = false;
 
     public function systemone_assign_module_details(){
         return $this->hasMany(SystemOneAclAssignModule::class, 'fkuser', 'pkid')->where('logdel', 0);

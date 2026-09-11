@@ -15,5 +15,5 @@ interface PminaaRequestInterface
     public function pminaaRequestChangeApprovalStatusRepository(array $request, $rapidx_user_id);
     public function getConformanceApprovalRepository();
     public function viewPdfPminaaRequestRepository($id);
-
+    public function approveAllPendingRequestsRepository($presidentApproval);
 }

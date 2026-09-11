@@ -80,4 +80,21 @@ class PminaaRequestController extends Controller
     public function viewPdfPminaaRequest($id){
         return $this->pminaaRequestServiceService->viewPdfPminaaRequestService($id);
     }
+
+    public function approveAllPendingRequests(Request $request){
+        $presidentApproval = $request->presidentApproval;
+        $result = $this->pminaaRequestServiceService->approveAllPendingRequestsService($presidentApproval);
+
+        if ($result['hasError'] === 0) {
+            return response()->json([
+                'hasError' => 0,
+                'hasPendingRequests' => $result['hasPendingRequests'] ?? 0,
+            ]);
+        }
+
+        return response()->json([
+            'hasError' => 1,
+            'exceptionError' => $result['exceptionError'] ?? 'An unknown error occurred.',
+        ], 500);
+    }
 }

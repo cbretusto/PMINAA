@@ -102,6 +102,8 @@
                                 <i class="fas fa-plus me-1"></i> New Request
                             </button>
 
+                            <div class="d-none" id="divApprovalPminaaRequest"></div>
+
                         </div>
                         <!-- Table -->
                         <div class="table-responsive">
@@ -492,7 +494,34 @@
             if(sessionCheck == ''){
                 alert('Session expired!')
                 window.location.reload();
+            }else{
+                if(sessionCheck == '147'){
+                    $('#divApprovalPminaaRequest').removeClass('d-none');
+                    $('#divApprovalPminaaRequest').append(
+                        $('<button>', {
+                            type: 'button',
+                            class: 'btn btn-dark',
+                            id: 'btnApprovalPminaaRequest',
+                            'data-csrf': $('meta[name="csrf-token"]').attr('content'),
+                        }).html('<i class="fa-solid fa-thumbs-up" id="iBtnApprovalPminaaRequestIcon"></i> Approve all pending requests')
+                    );
+
+                }
             }
+
+            $('#btnApprovalPminaaRequest').click(function (e) {
+                e.preventDefault();
+                console.log('Approval button clicked');
+
+                let presidentApproval = '147' // 147 = Joel Padullo
+
+                if(sessionCheck == ''){
+                    alert('Session expired!')
+                    window.location.reload();
+                }else{
+                    ApproveAllPendingRequests(presidentApproval);
+                }
+            });
 
             if(pminaaRequestApprover == ''){
                 alert('Session expired!')

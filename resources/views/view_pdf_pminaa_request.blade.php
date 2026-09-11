@@ -1,494 +1,455 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>PMI Network Account Activation</title>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Access Request Form</title>
-</head>
+        <style>
+            @page {
+                size: A4;
+                margin: 15px 20px;
+            }
 
-<body style="
-    margin:0;
-    padding:0;
-    background:#ffffff;
-    font-family:Arial, Helvetica, sans-serif;
-    color:#000000;
-    font-size:13px;
-">
+            html,
+            body {
+                width: 100%;
+                background: #ffffff;
+                font-family: Arial, Helvetica, sans-serif;
+                color: #000000;
+                font-size: 13px;
+            }
 
-    <table width="100%" cellpadding="0" cellspacing="0"
-        style="
-            max-width:1000px;
-            margin:0 auto;
-            background:#ffffff;
-            border:1px solid #000000;
-            border-radius:0;
-            overflow:hidden;
-        ">
+            /* =====================================================
+            ======================= GENERAL ========================
+            ======================================================== */
+            table {
+                border-collapse: collapse;
+            }
 
-        <!-- HEADER -->
-        <tr>
-            <td style="
-                padding:12px 16px;
-                background:#000000;
-                color:#ffffff;
-            ">
-                <div style="
-                    font-size:18px;
-                    font-weight:bold;
-                ">
+            /* =====================================================
+            ===================== MAIN HEADER ======================
+            ======================================================== */
+            .main-header {
+                width: 100%;
+                border: 1px solid #000000;
+                background: #000000;
+                color: #ffffff;
+            }
+
+            .main-header td {
+                padding: 12px 16px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            /* =====================================================
+            ================ EMPLOYEE INFORMATION ==================
+            ======================================================== */
+            .employee-section {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .employee-table {
+                width: 100%;
+            }
+
+            .employee-table td {
+                padding: 3px 8px 3px 0;
+                vertical-align: top;
+            }
+
+            .employee-label {
+                width: 25%;
+                font-weight: bold;
+            }
+
+            /* =====================================================
+            ==================== SECTION TITLE =====================
+            ======================================================== */
+            .section-title {
+                width: 100%;
+                font-size: 14px;
+                font-weight: bold;
+
+                border-top: 2px solid #000000;
+                border-bottom: 2px solid #000000;
+
+                padding: 5px 0 4px 0;
+                margin: 0 0 7px 0;
+            }
+
+            /* =====================================================
+            =================== SECTION WRAPPER ====================
+            ======================================================== */
+            .section {
+                width: 100%;
+                margin: 0;
+                padding: 8px 0;
+            }
+
+            /* =====================================================
+            =================== INTERNET ACCESS ====================
+            ======================================================== */
+            .justification-table {
+                width: 100%;
+            }
+
+            .justification-table td {
+                padding: 3px 8px 3px 0;
+                vertical-align: top;
+            }
+
+            .justification-label {
+                width: 25%;
+                font-weight: bold;
+            }
+
+            /* =====================================================
+            ====================== DATA TABLE ======================
+            ======================================================== */
+            .data-table {
+                width: 100%;
+                border: 1px solid #000000;
+                page-break-inside: auto;
+            }
+
+            .data-table thead {
+                display: table-header-group;
+            }
+
+            .data-table tbody {
+                display: table-row-group;
+            }
+
+            .data-table tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+            .data-table th {
+                padding: 5px 7px;
+                text-align: left;
+                vertical-align: top;
+
+                background: #ffffff;
+                font-weight: bold;
+
+                border-right: 1px solid #000000;
+                border-bottom: 1px solid #000000;
+            }
+
+            .data-table th:last-child {
+                border-right: none;
+            }
+
+            .data-table td {
+                padding: 5px 7px;
+                vertical-align: top;
+
+                border-right: 1px solid #000000;
+                border-bottom: 1px solid #000000;
+            }
+
+            .data-table td:last-child {
+                border-right: none;
+            }
+
+            /* =====================================================
+            ====================== N/A TABLE =======================
+            ======================================================== */
+            .na-table {
+                width: 100%;
+                border: 1px solid #000000;
+            }
+
+            .na-table td {
+                padding: 5px;
+                text-align: center;
+            }
+
+            /* =====================================================
+            ================= PDF PAGE BREAK RULES =================
+            ======================================================== */
+            table {
+                page-break-inside: auto;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <!-- =====================================================
+        ========================= HEADER =========================
+        ========================================================== -->
+        <table class="main-header" cellpadding="0" cellspacing="0">
+            <tr>
+                <td>
                     PMI Network Account Activation
-                </div>
-            </td>
-        </tr>
+                </td>
+            </tr>
+        </table>
 
+        <!-- =====================================================
+        ================== EMPLOYEE INFORMATION ==================
+        ========================================================== -->
+        <div class="employee-section">
+            <table class="employee-table" width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="employee-label">
+                        Control No.
+                    </td>
+                    <td>
+                        : {{ $data['control_no'] ?? 'N/A' }}
+                    </td>
+                </tr>
 
-        <!-- EMPLOYEE INFORMATION -->
-        <tr>
-            <td style="padding:12px 16px 8px;">
+                <tr>
+                    <td class="employee-label">
+                        Employee No.
+                    </td>
+                    <td>
+                        : {{ $data['employee_no'] ?? 'N/A' }}
+                    </td>
+                </tr>
 
-                {{-- <div style="
-                    font-size:14px;
-                    font-weight:bold;
-                    color:#000000;
-                    border-bottom:2px solid #000000;
-                    padding-bottom:4px;
-                    margin-bottom:7px;
-                ">
-                    Employee Information
-                </div> --}}
+                <tr>
+                    <td class="employee-label">
+                        Employee Name
+                    </td>
+                    <td>
+                        :
+                        {{ $data['employee_lastname'] ?? '' }},
+                        {{ $data['employee_name'] ?? '' }}
 
-                <table width="100%" cellpadding="0" cellspacing="0"
-                    style="border-collapse:collapse;">
+                        @if (!empty($data['employee_middlename']))
+                            {{ substr($data['employee_middlename'], 0, 1) }}.
+                        @endif
+                    </td>
+                </tr>
 
-                    <tr>
-                        <td width="25%" style="padding:3px 8px 3px 0;">
-                            <strong>Control No.</strong>
-                        </td>
-                        <td style="padding:3px 0;">
-                            : {{ $data['control_no'] ?? 'N/A' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%" style="padding:3px 8px 3px 0;">
-                            <strong>Employee No.</strong>
-                        </td>
-                        <td style="padding:3px 0;">
-                            : {{ $data['employee_no'] ?? 'N/A' }}
-                        </td>
-                    </tr>
+                <tr>
+                    <td class="employee-label">
+                        User Type
+                    </td>
+                    <td>
+                        : {{ $data['user_type'] ?? 'N/A' }}
+                    </td>
+                </tr>
 
-                    <tr>
-                        <td style="padding:3px 8px 3px 0;">
-                            <strong>Employee Name</strong>
-                        </td>
-                        <td style="padding:3px 0;">
-                            :
-                            {{ $data['employee_lastname'] ?? '' }},
-                            {{ $data['employee_name'] ?? '' }}
-                            {{ $data['employee_middlename'] ? substr($data['employee_middlename'], 0, 1) . '.' : '' }}
-                        </td>
-                    </tr>
+                <tr>
+                    <td class="employee-label">
+                        Nature of Employment
+                    </td>
+                    <td>
+                        : {{ $data['nature_of_employment'] ?? 'N/A' }}
+                    </td>
+                </tr>
 
-                    <tr>
-                        <td style="padding:3px 8px 3px 0;">
-                            <strong>User Type</strong>
-                        </td>
-                        <td style="padding:3px 0;">
-                            : {{ $data['user_type'] ?? 'N/A' }}
-                        </td>
-                    </tr>
+                <tr>
+                    <td class="employee-label">
+                        Position
+                    </td>
+                    <td>
+                        : {{ $data['position_job_title'] ?? 'N/A' }}
+                    </td>
+                </tr>
 
-                    <tr>
-                        <td style="padding:3px 8px 3px 0;">
-                            <strong>Nature of Employment</strong>
-                        </td>
-                        <td style="padding:3px 0;">
-                            : {{ $data['nature_of_employment'] ?? 'N/A' }}
-                        </td>
-                    </tr>
+                <tr>
+                    <td class="employee-label">
+                        Department / Agency
+                    </td>
+                    <td>
+                        : {{ $data['department_agency'] ?? 'N/A' }}
+                    </td>
+                </tr>
 
-                    <tr>
-                        <td style="padding:3px 8px 3px 0;">
-                            <strong>Position</strong>
-                        </td>
-                        <td style="padding:3px 0;">
-                            : {{ $data['position_job_title'] ?? 'N/A' }}
-                        </td>
-                    </tr>
+                <tr>
+                    <td class="employee-label">
+                        Remarks
+                    </td>
+                    <td>
+                        : {{ $data['remarks'] ?? 'N/A' }}
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-                    <tr>
-                        <td style="padding:3px 8px 3px 0;">
-                            <strong>Department / Agency</strong>
-                        </td>
-                        <td style="padding:3px 0;">
-                            : {{ $data['department_agency'] ?? 'N/A' }}
-                        </td>
-                    </tr>
+        <!-- =====================================================
+        ==================== INTERNET ACCESS =====================
+        ========================================================== -->
+        <div class="section">
+            <div class="section-title">
+                Internet Access
+            </div>
 
-                    <tr>
-                        <td style="padding:3px 8px 3px 0;">
-                            <strong>Remarks</strong>
-                        </td>
-                        <td style="padding:3px 0;">
-                            : {{ $data['remarks'] ?? 'N/A' }}
-                        </td>
-                    </tr>
+            <table class="justification-table" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td class="justification-label">
+                        Justification
+                    </td>
+                    <td>
+                        {{ $data['internet_access']['Justification'] ?? 'N/A' }}
+                    </td>
+                </tr>
+            </table>
 
+            @if (!empty($data['internet_access']['Details']))
+                <table class="data-table" cellpadding="0" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th style="width: 100%;">
+                                Details
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach ($data['internet_access']['Details'] as $item)
+                            <tr>
+                                <td>
+                                    {{ $item }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
-
-            </td>
-        </tr>
-        <br>
-
-        <!-- INTERNET ACCESS -->
-        <tr>
-            <td style="padding:8px 16px;">
-
-                <div style="
-                    font-size:14px;
-                    font-weight:bold;
-                    color:#000000;
-                    border-top:2px solid #000000;
-                    border-bottom:2px solid #000000;
-                    padding:5px 0 4px;
-                    margin-bottom:7px;
-                ">
-                    Internet Access
-                </div>
-
-                <table width="100%" cellpadding="0" cellspacing="0"
-                    style="border-collapse:collapse;">
-
+            @else
+                <table class="na-table" cellpadding="0" cellspacing="0">
                     <tr>
-                        <td width="25%" style="
-                            padding:3px 8px 3px 0;
-                            font-weight:bold;
-                        ">
-                            Justification
-                        </td>
-
-                        <td style="padding:3px 0;">
-                            {{ $data['internet_access']['Justification'] ?? 'N/A' }}
+                        <td>
+                            N/A
                         </td>
                     </tr>
-
                 </table>
+            @endif
+        </div>
 
-                @if (!empty($data['internet_access']['Details']))
 
-                    <table width="100%" cellpadding="0" cellspacing="0"
-                        style="
-                            border-collapse:collapse;
-                            border:1px solid #000000;
-                            margin-top:5px;
-                        ">
+        <!-- =====================================================
+        ================ ACCOUNT / SYSTEM ACCESS =================
+        ========================================================== -->
+        <div class="section">
+            <div class="section-title">
+                Account / System Access
+            </div>
 
-                        <thead>
-                            <tr>
-                                <th align="left" style="
-                                    padding:5px 7px;
-                                    border-bottom:1px solid #000000;
-                                    background:#ffffff;
-                                ">
-                                    Details
-                                </th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @foreach ($data['internet_access']['Details'] as $item)
-                                <tr>
-                                    <td style="
-                                        padding:5px 7px;
-                                        border-bottom:1px solid #000000;
-                                    ">
-                                        {{ $item }}
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-
-                    </table>
-
-                @else
-
-                    <table width="100%" cellpadding="0" cellspacing="0"
-                        style="
-                            border-collapse:collapse;
-                            border:1px solid #000000;
-                            margin-top:5px;
-                        ">
+            @if (!empty($data['account_system_access']['Details']))
+                <table class="data-table" cellpadding="0" cellspacing="0">
+                    <thead>
                         <tr>
-                            <td align="center" style="
-                                padding:5px;
-                                background:#ffffff;
-                                color:#000000;
-                            ">
-                                N/A
-                            </td>
+                            <th style="width: 30%;">
+                                Access Type
+                            </th>
+
+                            <th style="width: 30%;">
+                                Account Name
+                            </th>
+
+                            <th style="width: 40%;">
+                                Remarks
+                            </th>
                         </tr>
-                    </table>
+                    </thead>
 
-                @endif
-
-            </td>
-        </tr>
-        <br>
-
-        <!-- ACCOUNT / SYSTEM ACCESS -->
-        <tr>
-            <td style="padding:8px 16px;">
-
-                <div style="
-                    font-size:14px;
-                    font-weight:bold;
-                    color:#000000;
-                    border-top:2px solid #000000;
-                    border-bottom:2px solid #000000;
-                    padding:5px 0 4px;
-                    margin-bottom:7px;
-                ">
-                    Account / System Access
-                </div>
-
-                @if (!empty($data['account_system_access']['Details']))
-
-                    <table width="100%" cellpadding="0" cellspacing="0"
-                        style="
-                            border-collapse:collapse;
-                            border:1px solid #000000;
-                        ">
-
-                        <thead>
+                    <tbody>
+                        @foreach ($data['account_system_access']['Details'] as $account)
                             <tr>
-
-                                <th align="left" style="
-                                    padding:5px 7px;
-                                    border-right:1px solid #000000;
-                                    border-bottom:1px solid #000000;
-                                    background:#ffffff;
-                                ">
-                                    Access Type
-                                </th>
-
-                                <th align="left" style="
-                                    padding:5px 7px;
-                                    border-right:1px solid #000000;
-                                    border-bottom:1px solid #000000;
-                                    background:#ffffff;
-                                ">
-                                    Account Name
-                                </th>
-
-                                <th align="left" style="
-                                    padding:5px 7px;
-                                    border-bottom:1px solid #000000;
-                                    background:#ffffff;
-                                ">
-                                    Remarks
-                                </th>
-
+                                <td>
+                                    {{ $account['accountSystemAccess'] ?? 'N/A' }}
+                                </td>
+                                <td>
+                                    {{ $account['accountSystemName'] ?? 'N/A' }}
+                                </td>
+                                <td>
+                                    {{ $account['remark'] ?? 'N/A' }}
+                                </td>
                             </tr>
-                        </thead>
+                        @endforeach
+                    </tbody>
+                </table>
+            @else
+                <table class="na-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>
+                            N/A
+                        </td>
+                    </tr>
+                </table>
+            @endif
+        </div>
 
-                        <tbody>
+        <!-- =====================================================
+        ================= NETWORK FOLDER ACCESS ==================
+        ========================================================== -->
+        <div class="section">
+            <div class="section-title">
+                Network Folder Access
+            </div>
 
-                            @foreach ($data['account_system_access']['Details'] as $account)
-
-                                <tr>
-
-                                    <td style="
-                                        padding:5px 7px;
-                                        border-right:1px solid #000000;
-                                        border-bottom:1px solid #000000;
-                                    ">
-                                        {{ $account['accountSystemAccess'] ?? 'N/A' }}
-                                    </td>
-
-                                    <td style="
-                                        padding:5px 7px;
-                                        border-right:1px solid #000000;
-                                        border-bottom:1px solid #000000;
-                                    ">
-                                        {{ $account['accountSystemName'] ?? 'N/A' }}
-                                    </td>
-
-                                    <td style="
-                                        padding:5px 7px;
-                                        border-bottom:1px solid #000000;
-                                    ">
-                                        {{ $account['remark'] ?? 'N/A' }}
-                                    </td>
-
-                                </tr>
-
-                            @endforeach
-
-                        </tbody>
-
-                    </table>
-
-                @else
-
-                    <!-- MERGED N/A ROW -->
-                    <table width="100%" cellpadding="0" cellspacing="0"
-                        style="
-                            border-collapse:collapse;
-                            border:1px solid #000000;
-                        ">
+            @if (!empty($data['network_folder_access']['Details']))
+                <table class="data-table" cellpadding="0" cellspacing="0">
+                    <thead>
                         <tr>
-                            <td align="center" colspan="3" style="
-                                padding:5px;
-                                background:#ffffff;
-                                color:#000000;
-                            ">
-                                N/A
-                            </td>
+                            <th style="width: 20%;">
+                                Folder Access
+                            </th>
+
+                            <th style="width: 30%;">
+                                Folder Name
+                            </th>
+
+                            <th style="width: 20%;">
+                                Access Type
+                            </th>
+
+                            <th style="width: 30%;">
+                                Remarks
+                            </th>
                         </tr>
-                    </table>
+                    </thead>
 
-                @endif
-
-            </td>
-        </tr>
-        <br>
-
-        <!-- NETWORK FOLDER ACCESS -->
-        <tr>
-            <td style="padding:8px 16px 14px;">
-
-                <div style="
-                    font-size:14px;
-                    font-weight:bold;
-                    color:#000000;
-                    border-top:2px solid #000000;
-                    border-bottom:2px solid #000000;
-                    padding:5px 0 4px;
-                    margin-bottom:7px;
-                ">
-                    Network Folder Access
-                </div>
-
-                @if (!empty($data['network_folder_access']['Details']))
-
-                    <table width="100%" cellpadding="0" cellspacing="0"
-                        style="
-                            border-collapse:collapse;
-                            border:1px solid #000000;
-                        ">
-
-                        <thead>
+                    <tbody>
+                        @foreach ($data['network_folder_access']['Details'] as $folder)
                             <tr>
+                                <td>
+                                    {{ $folder['folder_access'] ?? 'N/A' }}
+                                </td>
 
-                                <th align="left" style="
-                                    padding:5px 7px;
-                                    border-right:1px solid #000000;
-                                    border-bottom:1px solid #000000;
-                                    background:#ffffff;
-                                ">
-                                    Folder Access
-                                </th>
+                                <td>
+                                    {{ $folder['folder_name'] ?? 'N/A' }}
+                                </td>
 
-                                <th align="left" style="
-                                    padding:5px 7px;
-                                    border-right:1px solid #000000;
-                                    border-bottom:1px solid #000000;
-                                    background:#ffffff;
-                                ">
-                                    Folder Name
-                                </th>
+                                <td>
+                                    {{ $folder['access_type'] ?? 'N/A' }}
+                                </td>
 
-                                <th align="left" style="
-                                    padding:5px 7px;
-                                    border-right:1px solid #000000;
-                                    border-bottom:1px solid #000000;
-                                    background:#ffffff;
-                                ">
-                                    Access Type
-                                </th>
-
-                                <th align="left" style="
-                                    padding:5px 7px;
-                                    border-bottom:1px solid #000000;
-                                    background:#ffffff;
-                                ">
-                                    Remarks
-                                </th>
-
+                                <td>
+                                    {{ $folder['remark'] ?? 'N/A' }}
+                                </td>
                             </tr>
-                        </thead>
-
-                        <tbody>
-
-                            @foreach ($data['network_folder_access']['Details'] as $folder)
-
-                                <tr>
-
-                                    <td style="
-                                        padding:5px 7px;
-                                        border-right:1px solid #000000;
-                                        border-bottom:1px solid #000000;
-                                    ">
-                                        {{ $folder['folder_access'] ?? 'N/A' }}
-                                    </td>
-
-                                    <td style="
-                                        padding:5px 7px;
-                                        border-right:1px solid #000000;
-                                        border-bottom:1px solid #000000;
-                                    ">
-                                        {{ $folder['folder_name'] ?? 'N/A' }}
-                                    </td>
-
-                                    <td style="
-                                        padding:5px 7px;
-                                        border-right:1px solid #000000;
-                                        border-bottom:1px solid #000000;
-                                    ">
-                                        {{ $folder['access_type'] ?? 'N/A' }}
-                                    </td>
-
-                                    <td style="
-                                        padding:5px 7px;
-                                        border-bottom:1px solid #000000;
-                                    ">
-                                        {{ $folder['remark'] ?? 'N/A' }}
-                                    </td>
-
-                                </tr>
-
-                            @endforeach
-
-                        </tbody>
-
-                    </table>
-
-                @else
-
-                    <!-- MERGED N/A ROW -->
-                    <table width="100%" cellpadding="0" cellspacing="0"
-                        style="
-                            border-collapse:collapse;
-                            border:1px solid #000000;
-                        ">
-                        <tr>
-                            <td align="center" colspan="4" style="
-                                padding:5px;
-                                background:#ffffff;
-                                color:#000000;
-                            ">
-                                N/A
-                            </td>
-                        </tr>
-                    </table>
-
-                @endif
-
-            </td>
-        </tr>
-
-    </table>
-
-</body>
+                        @endforeach
+                    </tbody>
+                </table>
+            @else
+                <table class="na-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td>
+                            N/A
+                        </td>
+                    </tr>
+                </table>
+            @endif
+        </div>
+    </body>
 
 </html>

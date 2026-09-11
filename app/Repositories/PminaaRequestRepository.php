@@ -2,6 +2,8 @@
 
 namespace App\Repositories;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\WelcomeMail;
+use App\Models\EmailLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use PDF;
@@ -31,56 +33,6 @@ use App\Interfaces\PminaaRequestInterface;
 
 class PminaaRequestRepository implements PminaaRequestInterface
 {
-    // public function getAllPminaaRequestDataRepository($request, $rapidxUserId, $rapidx_department_id, array $conformanceApprovalIds){
-    //     $statusMapping = [
-    //         'for_approval' => [0, 1, 2, 3],
-    //         'approved'     => [5],
-    //         'accountSetup' => [4],
-    //         'disapproved'  => [6, 7, 8, 9, 10],
-    //     ];
-
-    //     return PminaaDetails::with([
-    //         'rapidx_user_info',
-    //         'approvers_info.section_head_info',
-    //         'approvers_info.department_head_info',
-    //         'approvers_info.iss_manager_info',
-    //         'approvers_info.admin_avp_info',
-    //         'approvers_info.iss_hardware_info',
-    //     ])
-    //     ->where('logdel', 0)
-    //     ->when($request->filled('status'), function ($query) use ($request, $statusMapping) {
-    //         $get_status = $statusMapping[$request->status] ?? [];
-
-    //         if (!empty($get_status)) {
-    //             $query->whereIn('approval_status', $get_status);
-    //             $query->orderBy('approval_status', 'DESC');
-    //         }
-    //     }, function ($query) {
-    //         $query->whereRaw('1 = 0');
-    //     })
-    //     ->when(
-    //         // ISS 1 or 2,
-    //         !in_array($rapidx_department_id, [1, 2]),
-    //         function ($query) use ($request, $rapidxUserId, $conformanceApprovalIds) {
-    //             $query->where(function ($q) use ($request,$rapidxUserId,$conformanceApprovalIds){
-    //                 $q->where('requested_by', $rapidxUserId);
-
-    //                 if($request->status !== 'requestor'){
-    //                     $q->orWhereHas('approvers_info', function ($approverQuery) use ($rapidxUserId){
-    //                         $approverQuery
-    //                             ->where('section_head', $rapidxUserId)
-    //                             ->orWhere('department_head', $rapidxUserId)
-    //                             ->orWhere('iss_manager', $rapidxUserId)
-    //                             ->orWhere('admin_avp', $rapidxUserId)
-    //                             ->orWhere('iss_hardware', $rapidxUserId);
-    //                     });
-    //                 }
-    //             });
-    //         }
-    //     )
-    //     ->get();
-    // }
-
     public function getAllPminaaRequestDataRepository($request, $rapidxUserId, $rapidxDepartmentId, array $conformanceApprovalIds){
         $statusMapping = [
             'for_approval' => [0, 1, 2, 3],
@@ -137,70 +89,8 @@ class PminaaRequestRepository implements PminaaRequestInterface
                 });
             }
         )
-
         ->get();
     }
-
-    // AUGUST 19, 2026
-    // public function getAllPminaaRequestDataRepository($request,$rapidxUserId,$rapidx_department_id,array $conformanceApprovalIds) {
-    //     $statusMapping = [
-    //         'for_approval' => [0, 1, 2, 3],
-    //         'approved'     => [5],
-    //         'accountSetup' => [4],
-    //         'disapproved'  => [6, 7, 8, 9, 10],
-    //     ];
-
-    //     return PminaaDetails::with([
-    //         'rapidx_user_info',
-    //         'approvers_info.section_head_info',
-    //         'approvers_info.department_head_info',
-    //         'approvers_info.iss_manager_info',
-    //         'approvers_info.admin_avp_info',
-    //         'approvers_info.iss_hardware_info',
-    //     ])
-    //     ->where('logdel', 0)
-
-    //     ->when($request->filled('status'), function ($query) use ($request, $statusMapping) {
-    //         $get_status = $statusMapping[$request->status] ?? [];
-
-    //         if (!empty($get_status)) {
-    //             $query->whereIn('approval_status', $get_status);
-    //         }
-    //     }, function ($query) {
-    //         $query->whereRaw('1 = 0');
-    //     })
-
-    //     // APPROVAL STATUS muna
-    //     ->orderByDesc('approval_status')
-
-    //     // Same approval_status → CONTROL NO DESC
-    //     ->orderByDesc('control_no')
-
-    //     ->when(
-    //         !in_array($rapidx_department_id, [1, 2]),
-    //         function ($query) use ($request, $rapidxUserId, $conformanceApprovalIds) {
-    //             $query->where(function ($q) use (
-    //                 $request,
-    //                 $rapidxUserId,
-    //                 $conformanceApprovalIds
-    //             ) {
-    //                 $q->where('requested_by', $rapidxUserId);
-
-    //                 if ($request->status !== 'requestor') {
-    //                     $q->orWhereHas('approvers_info', function ($approverQuery) use ($rapidxUserId) {
-    //                         $approverQuery
-    //                             ->where('section_head', $rapidxUserId)
-    //                             ->orWhere('department_head', $rapidxUserId)
-    //                             ->orWhere('iss_manager', $rapidxUserId)
-    //                             ->orWhere('admin_avp', $rapidxUserId)
-    //                             ->orWhere('iss_hardware', $rapidxUserId);
-    //                     });
-    //                 }
-    //             });
-    //         }
-    //     )
-    //     ->get();
-    // }
 
     public function getSystemonePmiSubconEmployeeRepository($user_type){
         if($user_type == 'PMI'){
@@ -302,11 +192,11 @@ class PminaaRequestRepository implements PminaaRequestInterface
         $controlNo          = $this->mapPminaaControlNo();
         $requestedBy        = $pminaaData['requested_by'];
         $approvalStatus     = 0;
-
-        // dd($controlNo);
+        $remarkValue        = '';
+        // dd($pminaaData);
         if (empty($pminaaId)) {
             if(empty($controlNo)) {
-                return '123';
+                return false;
             }else{
                 $getControlNo = $controlNo;
                 $pminaaData['control_no'] = $getControlNo;
@@ -323,36 +213,42 @@ class PminaaRequestRepository implements PminaaRequestInterface
             $pminaaData['approval_status'] = 0;
             $pminaa = PminaaDetails::findOrFail($pminaaId);
             $getControlNo = $pminaa['control_no'] ?? '';
-            $pminaa->update($pminaaData);
 
-            $approverData['updated_at']                         =   now();
-            $approverData['section_head_approved_by_date']      =   NULL;
-            $approverData['section_head_approved_by_remark']    =   '';
-            $approverData['department_head_approved_by_date']   =   NULL;
-            $approverData['department_head_approved_by_remark'] =   '';
-            $approverData['iss_manager_approved_by_date']       =   NULL;
-            $approverData['iss_manager_approved_by_remark']     =   '';
-            $approverData['admin_avp_approved_by_date']         =   NULL;
-            $approverData['admin_avp_approved_by_remark']       =   '';
-            $approverData['iss_hardware']                       =   NULL;
-            $approverData['iss_hardware_approved_by_date']      =   NULL;
-            $approverData['iss_hardware_approved_by_remark']    =   '';
+            if(empty($getControlNo)) {
+                return false;
+            }else{
+                $pminaa->update($pminaaData);
 
-            PminaaApprover::where('pminaa_details_id', $pminaaId)->update($approverData);
+                $approverData['updated_at']                         =   now();
+                $approverData['section_head_approved_by_date']      =   NULL;
+                $approverData['section_head_approved_by_remark']    =   '';
+                $approverData['department_head_approved_by_date']   =   NULL;
+                $approverData['department_head_approved_by_remark'] =   '';
+                $approverData['iss_manager_approved_by_date']       =   NULL;
+                $approverData['iss_manager_approved_by_remark']     =   '';
+                $approverData['admin_avp_approved_by_date']         =   NULL;
+                $approverData['admin_avp_approved_by_remark']       =   '';
+                $approverData['iss_hardware']                       =   NULL;
+                $approverData['iss_hardware_approved_by_date']      =   NULL;
+                $approverData['iss_hardware_approved_by_remark']    =   '';
+
+                PminaaApprover::where('pminaa_details_id', $pminaaId)->update($approverData);
+            }
         }
-
+        // dd($getControlNo);
         $requestedBy = RapidxUser::where('id', $requestedBy)
         ->where('user_stat', 1)
         ->get('email');
 
         $pminaaDataForEmail['approved'] = 'ISS Hardware';
         $pminaaDataForEmail['control_no'] = $getControlNo;
-        $this->mapEmailNotification($pminaaDataForEmail, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id); // CHAN
+        $this->mapEmailNotification($pminaaDataForEmail, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id, $remarkValue); // CHAN
         return true;
     }
 
     private function mapPminaaControlNo(){
         $getLastControlNo   = PminaaDetails::orderBy('control_no', 'DESC')->where('logdel', 0)->where('status', 0)->first();
+
         $controlNoFormat    = "ISS-NAF-".NOW()->format('ym')."-";
         if ($getLastControlNo == null){
             $newControlNo   = $controlNoFormat.'001';
@@ -386,7 +282,7 @@ class PminaaRequestRepository implements PminaaRequestInterface
         return [
             'user_type'             => $data['user_type'] ?? null,
             'factory'               => $data['factory'] ?? null,
-            'control_no'            => $data['control_no'] ?? null,
+            // 'control_no'            => $data['control_no'] ?? null,
             'employee_no'           => $data['employee_no'] ?? null,
             'employee_lastname'     => $data['employee_lastname'] ?? null,
             'employee_name'         => $data['employee_name'] ?? null,
@@ -624,11 +520,11 @@ class PminaaRequestRepository implements PminaaRequestInterface
         //     $approverData
         // );
 
-        $this->mapEmailNotification($pminaaData, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id); // CHAN
+        $this->mapEmailNotification($pminaaData, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id, $remarkValue); // CHAN
         return true;
     }
 
-    private function mapEmailNotification(array $pminaaData, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id): bool{
+    private function mapEmailNotification(array $pminaaData, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id, $remarkValue): bool{
         $pminaa = $pminaaData;
         $step = (int)$approvalStatus;
         $pminaaDetails = ['data' => $pminaa];
@@ -661,41 +557,59 @@ class PminaaRequestRepository implements PminaaRequestInterface
         }else{
             $approverId = $approverData[$stepKey] ?? null;
         }
+        // dd($approverId);
 
-        if($step == 5 || $step == 10 || $approverId){
-            $user = RapidxUser::find($approverId);
-            if($step == 4){
-                $email_to = $user->pluck('email')
-                        ->filter()
-                        ->toArray();
-            }else{
-                $email_to = $user->email ?? '';
+        $user = RapidxUser::find($approverId);
+
+        if($step == 4){
+            $email_to = $user->pluck('email')
+                    ->filter()
+                    ->toArray();
+        }else if($step == 5){
+            $email_to = ['group-hw@pricon.ph','group-iss-software@pricon.ph'];
+        }else{
+            $email_to = $user->email ?? '';
+        }
+
+        // dd($pminaaRequestedBy);
+        if ($user && !empty($email_to)) {
+            $username = '';
+            if ($pminaa) {
+                $username .= Str::lower(Str::substr($pminaa['employee_name'] ?? '', 0, 1));
             }
-            if ($user && !empty($email_to)) {
-                $username = '';
-                if ($pminaa) {
-                    $username .= Str::lower(Str::substr($pminaa['employee_name'] ?? '', 0, 1));
-                }
 
-                if ($pminaa && !preg_match('/^[-.]+$/', trim($pminaa['employee_middlename'] ?? ''))) {
-                    $username .= Str::lower(Str::substr(trim($pminaa['employee_middlename'] ?? ''), 0, 1));
-                }
+            if ($pminaa && !preg_match('/^[-.]+$/', trim($pminaa['employee_middlename'] ?? ''))) {
+                $username .= Str::lower(Str::substr(trim($pminaa['employee_middlename'] ?? ''), 0, 1));
+            }
 
-                if ($pminaa) {
-                    $surname = Str::ascii($pminaa['employee_lastname'] ?? ''); // ñ → n
-                    $surname = preg_replace('/[\s-]+/', '', $surname);
-                    $username .= Str::lower($surname);
-                }
-                $pminaaDetails['username'] = $username;
-                // dd($pminaaDetails);
+            if ($pminaa) {
+                $surname = Str::ascii($pminaa['employee_lastname'] ?? ''); // ñ → n
+                $surname = preg_replace('/[\s-]+/', '', $surname);
+                $username .= Str::lower($surname);
+            }
+            $pminaaDetails['username']  = $username;
+            $pminaaDetails['remark']    = $remarkValue;
 
+            try {
                 Mail::send('mail.pminaa_mail', $pminaaDetails, function ($message) use ($pminaaRequestedBy, $email_to) {
                     $message->to($email_to)
                             ->cc($pminaaRequestedBy)
                             ->bcc('cbretusto@pricon.ph')
                             ->subject('PMINAA Approval Notification');
                 });
+                \Log::info('PMINAA email sent successfully to: ' . $email_to);
+            } catch (\Exception $e) {
+                \Log::error('PMINAA email failed: ' . $e->getMessage());
             }
+
+            // dd($pminaaDetails);
+
+            // Mail::send('mail.pminaa_mail', $pminaaDetails, function ($message) use ($pminaaRequestedBy, $email_to) {
+            //     $message->to($email_to)
+            //             ->cc($pminaaRequestedBy)
+            //             ->bcc('cbretusto@pricon.ph')
+            //             ->subject('PMINAA Approval Notification');
+            // });
         }
 
         return true;
@@ -745,7 +659,6 @@ class PminaaRequestRepository implements PminaaRequestInterface
                     ->where('username', $username)
                     ->where('logdel', 0)
                     ->first();
-
                 if (!$rapidUser) {
                     $rapidUser = RapidUser::insertGetId([
                         'empno'             => $userEmployeeNo,
@@ -770,6 +683,7 @@ class PminaaRequestRepository implements PminaaRequestInterface
                     $getRapidUserId = $rapidUser;
                 }else{
                     $getRapidUserId = $rapidUser->id;
+                    // dd(RapidUser::where('id', $getRapidUserId)->get());
                     RapidUser::where('id', $getRapidUserId)
                         ->update([
                             'password'          => 'mlYeOVfHJBl4o',
@@ -781,7 +695,6 @@ class PminaaRequestRepository implements PminaaRequestInterface
                             'emp_type'          => $userType == 'PMI' ? 'Pricon Employee' : 'Subcon Hired',
                         ]);
                 }
-
 
                 foreach ($modules as $module) {
                     $rapidModule = RapidModule::where('moduleName',$module['accountSystemName'])->where('logdel', 0)->first();
@@ -795,9 +708,10 @@ class PminaaRequestRepository implements PminaaRequestInterface
 
                     if (!$rapidAssignModule) {
                         RapidAssignModule::insert([
-                            'username'  => $getRapidUserId,
-                            'module'    => $rapidModule->pkid,
-                            'logdel'    => 0,
+                            'username'      => $getRapidUserId,
+                            'module'        => $rapidModule->pkid,
+                            'logdel'        => 0,
+                            'updated_at'    => now(),
                         ]);
                     }
 
@@ -813,7 +727,6 @@ class PminaaRequestRepository implements PminaaRequestInterface
                         ->where('user_stat', '!=', 2)
                         ->first();
 
-                    // If user does not exist, create new Rapid User
                     if (!$rapidxUser) {
                         $rapidxUser = RapidxUser::insertGetId([
                             'employee_number'       => $userEmployeeNo,
@@ -821,7 +734,6 @@ class PminaaRequestRepository implements PminaaRequestInterface
                             'name'                  => $userFirstName . ' ' . $userMiddleName . ' ' . $userLastName,
                             'email'                 => $username . '@pricon.ph',
                             'password'              => Hash::make($password),
-                            'department_id'            => $userDepartment,
                             'is_password_changed'   => 0,
                             'user_stat'             => 1,
                             'user_level_id'         => '3',
@@ -898,6 +810,10 @@ class PminaaRequestRepository implements PminaaRequestInterface
                             'type'              => '1',
                             'fkemployee'        => $systemOneUser->pkid,
                             'isEnable'          => '0',
+                            'loginIPAddress'    => '',
+                            'un'    => '',
+                            'pass_lastupdate'   => now(),
+                            'lastupdate'   => now(),
                         ]);
                         $SystemOneUserId = $systemOneUser;
                     }else{
@@ -976,4 +892,67 @@ class PminaaRequestRepository implements PminaaRequestInterface
 
         return $pdf->stream();
     }
+
+    public function approveAllPendingRequestsRepository($presidentApproval){
+        $approvers = PminaaApprover::with('pminaa_info')
+            ->where(function ($query) use ($presidentApproval) {
+                $query->where(function ($q) use ($presidentApproval) {
+                    $q->where('section_head', $presidentApproval)
+                    ->whereHas('pminaa_info', function ($q) {
+                        $q->where('approval_status', 0);
+                        $q->where('status', 0);
+                        $q->where('logdel', 0);
+                    });
+                })
+                ->orWhere(function ($q) use ($presidentApproval) {
+                    $q->where('department_head', $presidentApproval)
+                    ->whereHas('pminaa_info', function ($q) {
+                        $q->where('approval_status', 1);
+                        $q->where('status', 0);
+                        $q->where('logdel', 0);
+                    });
+                });
+            })
+            ->get();
+
+        // dd($approvers);
+        if ($approvers->isEmpty()) {
+            return [
+                'hasPendingRequests' => 0,
+            ];
+        }
+
+        foreach ($approvers as $approver) {
+            $pminaaInfo = $approver->pminaa_info;
+            $currentApprovalStatus = $pminaaInfo->approval_status;
+
+            $pminaaInfo->update([
+                'approval_status' => $currentApprovalStatus + 1,
+            ]);
+
+            if (
+                $approver->section_head == $presidentApproval &&
+                $currentApprovalStatus == 0
+            ) {
+                $approver->update([
+                    'section_head_approved_by_date' => now(),
+                ]);
+            }
+
+            if (
+                $approver->department_head == $presidentApproval &&
+                $currentApprovalStatus == 1
+            ) {
+                $approver->update([
+                    'department_head_approved_by_date' => now(),
+                ]);
+            }
+        }
+
+        return [
+            'hasPendingRequests' => 1,
+        ];
+    }
+
 }
+

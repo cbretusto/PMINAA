@@ -277,8 +277,11 @@ function CreateUpdatePminaaRequest() {
             if(response['hasError'] == 0) {
                 clearValidationErrors();
                 $('#modalCreateUpdatePminaaRequest').modal('hide');
-                toastr.success('Successfully saved!!!');
+                toastr.success('Successfully saved!');
                 dataTablePminaaRequest.draw();
+            }else if(response['hasError'] == 1) {
+                toastr.error('Saving failed!');
+                $('#modalCreateUpdatePminaaRequest').modal('hide');
             }else{
                 toastr.error('Request already exist!');
                 $('#modalCreateUpdatePminaaRequest').modal('hide');
@@ -289,7 +292,7 @@ function CreateUpdatePminaaRequest() {
         },
         errorCallback: (xhr) => {
             handleValidatorErrors(xhr.responseJSON.errors);
-            toastr.error('Saving user access failed!');
+            toastr.error('Saving failed!');
 
             $("#iBtnPminaaRequestIcon").removeClass('spinner-border spinner-border-sm');
             $("#btnPminaaRequest").removeClass('disabled');
@@ -408,6 +411,49 @@ function PminaaRequestChangeApprovalStatus(){
             $("#iBtnPminaaRequestApprovalIcon").removeClass('spinner-border spinner-border-sm');
             $("#btnPminaaRequestApproval").removeClass('disabled');
             $("#iBtnPminaaRequestApprovalIcon").addClass('');
+
+            toastr.error('An error occurred while processing your request.');
+        }
+    };
+    ajaxRequest(ajaxPminaaRequestChangeApprovalStatus);
+}
+
+function ApproveAllPendingRequests(presidentApproval){
+    const csrfToken = $('#btnApprovalPminaaRequest').data('csrf');
+    const ajaxPminaaRequestChangeApprovalStatus = {
+        url: 'approve_all_pending_requests',
+        method: "POST",
+        data: {
+                presidentApproval: presidentApproval,
+                _token: csrfToken
+            },
+        dataType: "json",
+        beforeSendCallback: function(xhr) {
+            $("#iBtnApprovalPminaaRequestIcon").addClass('spinner-border spinner-border-sm');
+            $("#btnApprovalPminaaRequest").addClass('disabled');
+            $("#iBtnApprovalPminaaRequestIcon").removeClass('');
+        },
+        successCallback: (response) => {
+            if(response['hasError'] == 0){
+                // toastr.success('Approved successfully!');
+                // dataTablePminaaRequest.draw();
+                if (response.hasPendingRequests === 0) {
+                    toastr.error(
+                        'You do not have any pending requests for approval.'
+                    );
+                } else {
+                    toastr.success('Approved successfully!');
+                    dataTablePminaaRequest.draw();
+                }
+            }
+            $("#iBtnApprovalPminaaRequestIcon").removeClass('spinner-border spinner-border-sm');
+            $("#btnApprovalPminaaRequest").removeClass('disabled');
+            $("#iBtnApprovalPminaaRequestIcon").addClass('');
+        },
+        errorCallback: () => {
+            $("#iBtnApprovalPminaaRequestIcon").removeClass('spinner-border spinner-border-sm');
+            $("#btnApprovalPminaaRequest").removeClass('disabled');
+            $("#iBtnApprovalPminaaRequestIcon").addClass('');
 
             toastr.error('An error occurred while processing your request.');
         }
