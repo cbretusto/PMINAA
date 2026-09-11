@@ -13,6 +13,12 @@
         $sessionCheck = '';
     }
 
+    if (isset($_SESSION['rapidx_department_id'])){
+        $sessionDepartmentId = $_SESSION['rapidx_department_id'];
+    }else{
+        $sessionDepartmentId = '';
+    }
+
     if (isset($_SESSION['pminaa_request_approver'])){
         $pminaaRequestApprover = $_SESSION['pminaa_request_approver'];
     }else{
@@ -89,6 +95,10 @@
                                         <option data-status="accountSetup">🖥️ For Account Setup</option>
                                         <option data-status="approved">✅ Approved</option>
                                         <option data-status="disapproved">❌ Disapproved</option>
+                                        <!-- <option data-status="all">📋 All Requests</option> -->
+                                        @if (in_array((int) $sessionDepartmentId, [1, 2]))
+                                            <option data-status="all">📋 All Requests</option>
+                                        @endif
                                     </select>
 
                                 </div>
@@ -546,6 +556,7 @@
                     status = $('#requestStatus').find(':selected').data('status');
                 }
             }
+
 
             $('#requestStatus').change(function (e) {
                 e.preventDefault();

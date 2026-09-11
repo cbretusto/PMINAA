@@ -34,13 +34,6 @@ use App\Interfaces\PminaaRequestInterface;
 class PminaaRequestRepository implements PminaaRequestInterface
 {
     public function getAllPminaaRequestDataRepository($request, $rapidxUserId, $rapidxDepartmentId, array $conformanceApprovalIds){
-        $statusMapping = [
-            'for_approval' => [0, 1, 2, 3],
-            'approved'     => [5],
-            'accountSetup' => [4],
-            'disapproved'  => [6, 7, 8, 9, 10],
-        ];
-
         return PminaaDetails::with([
             'rapidx_user_info',
             'approvers_info.section_head_info',
@@ -51,42 +44,104 @@ class PminaaRequestRepository implements PminaaRequestInterface
         ])
         ->where('logdel', 0)
         ->orderBy('control_no', 'desc')
-
         ->when(
-            $request->filled('status'),
-            function ($query) use ($request, $statusMapping) {
-                $statuses = $statusMapping[$request->status] ?? [];
-
-                if (!empty($statuses)) {
-                    $query->whereIn('approval_status', $statuses);
-                }
-            },
-            function ($query) {
-                $query->whereRaw('1 = 0');
+            $request->status === 'requestor',
+            function ($query) use ($rapidxUserId) {
+                $query->where('requested_by', $rapidxUserId);
             }
         )
-
         ->when(
-            !in_array($rapidxDepartmentId, [1, 2]),
-            function ($query) use ($request, $rapidxUserId) {
+            $request->status === 'for_approval',
+            function ($query) use ($rapidxUserId) {
+                $query->where(function ($q) use ($rapidxUserId) {
+                    // Status 0 = Section Head
+                    $q->where(function ($statusQuery) use ($rapidxUserId) {
+                        $statusQuery
+                            ->where('approval_status', 0)
+                            ->whereHas('approvers_info', function ($approver) use ($rapidxUserId) {
+                                $approver->where('section_head', $rapidxUserId);
+                            });
+                    })
 
-                $query->where(function ($q) use (
-                    $request,
-                    $rapidxUserId
-                ) {
-                    $q->where('requested_by', $rapidxUserId);
+                    // Status 1 = Department Head
+                    ->orWhere(function ($statusQuery) use ($rapidxUserId) {
+                        $statusQuery
+                            ->where('approval_status', 1)
+                            ->whereHas('approvers_info', function ($approver) use ($rapidxUserId) {
+                                $approver->where('department_head', $rapidxUserId);
+                            });
+                    })
 
-                    if ($request->status !== 'requestor') {
-                        $q->orWhereHas('approvers_info', function ($approverQuery) use ($rapidxUserId) {
-                            $approverQuery
-                                ->where('section_head', $rapidxUserId)
-                                ->orWhere('department_head', $rapidxUserId)
-                                ->orWhere('iss_manager', $rapidxUserId)
-                                ->orWhere('admin_avp', $rapidxUserId)
-                                ->orWhere('iss_hardware', $rapidxUserId);
-                        });
-                    }
+                    // Status 2 = ISS Manager
+                    ->orWhere(function ($statusQuery) use ($rapidxUserId) {
+                        $statusQuery
+                            ->where('approval_status', 2)
+                            ->whereHas('approvers_info', function ($approver) use ($rapidxUserId) {
+                                $approver->where('iss_manager', $rapidxUserId);
+                            });
+                    })
+
+                    // Status 3 = Admin AVP
+                    ->orWhere(function ($statusQuery) use ($rapidxUserId) {
+                        $statusQuery
+                            ->where('approval_status', 3)
+                            ->whereHas('approvers_info', function ($approver) use ($rapidxUserId) {
+                                $approver->where('admin_avp', $rapidxUserId);
+                            });
+                    });
                 });
+            }
+        )
+        ->when(
+            $request->status === 'accountSetup',
+            function ($query) use ($rapidxUserId) {
+                $query
+                    ->where('approval_status', 4)
+                    ->whereHas('approvers_info', function ($approver) use ($rapidxUserId) {
+                        $approver->where('iss_hardware', $rapidxUserId);
+                    });
+            }
+        )
+        ->when(
+            $request->status === 'approved',
+            function ($query) use ($rapidxUserId, $rapidxDepartmentId) {
+                $query->where('approval_status', 5);
+
+                if (!in_array($rapidxDepartmentId, [1, 2])) {
+                    $query->where('requested_by', $rapidxUserId);
+                }
+            }
+        )
+        ->when(
+            $request->status === 'disapproved',
+            function ($query) use ($rapidxUserId, $rapidxDepartmentId) {
+                $query->whereIn('approval_status', [6, 7, 8, 9, 10]);
+
+                if (!in_array($rapidxDepartmentId, [1, 2])) {
+                    $query->where('requested_by', $rapidxUserId);
+                }
+            }
+        )
+        ->when(
+            $request->status === 'all',
+            function ($query) use ($rapidxDepartmentId) {
+                if (!in_array($rapidxDepartmentId, [1, 2])) {
+                    $query->whereRaw('1 = 0');
+                }
+            }
+        )
+        ->when(
+            !$request->filled('status') ||
+            !in_array($request->status, [
+                'requestor',
+                'for_approval',
+                'accountSetup',
+                'approved',
+                'disapproved',
+                'all',
+            ]),
+            function ($query) {
+                $query->whereRaw('1 = 0');
             }
         )
         ->get();
