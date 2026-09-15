@@ -11,9 +11,11 @@ interface PminaaRequestInterface
     public function getAccountSystemFolderAccessRepository();
     public function getAccountSystemFolderNameRepository($get_access_id, $get_system_module);
     public function createUpdatePminaaRequestRepository(?string $pminaaId, array $data, $rapidx_user_id): bool;
+    public function pminaaRequestUserAccountRepository(?string $pminaaId, array $data, $rapidx_user_id): bool;
     public function getPminaaRequestInfoByIdRepository($pminaaId);
     public function pminaaRequestChangeApprovalStatusRepository(array $request, $rapidx_user_id);
     public function getConformanceApprovalRepository();
     public function viewPdfPminaaRequestRepository($id);
     public function approveAllPendingRequestsRepository($presidentApproval);
+    public function findSameEmployeeRequestsRepository($findUser);
 }

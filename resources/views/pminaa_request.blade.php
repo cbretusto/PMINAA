@@ -475,6 +475,164 @@
             </div>
         </div>
     </div><!-- Approval Modal End -->
+
+    <div class="modal fade" id="modalPminaaRequestUserAccount" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <form method="post" id="formPminaaRequestUserAccount" autocomplete="off">
+                @csrf
+                <div class="modal-content border-0 shadow rounded-4">
+                    <!-- Header -->
+                    <div class="modal-header bg-secondary text-white border-0">
+                        <div>
+                            <h5 class="modal-title fw-bold mb-1">
+                                <i class="fa-solid fa-user-gear me-2"></i>
+                                User Accounts
+                            </h5>
+
+                            <small class="text-white-50">
+                                Configure PC and Email account credentials
+                            </small>
+                        </div>
+
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close">
+                        </button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="modal-body p-4">
+                        <div class="row g-4">
+                            <input type="hidden" name="get_pminaa_id" id="getPminaaId">
+                            <!-- PC ACCOUNT -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border shadow-sm rounded-3">
+                                    <div class="card-header bg-light border-0 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-primary-subtle text-primary rounded-3 p-3">
+                                                <i class="fa-solid fa-desktop fa-lg"></i>
+                                            </div>
+
+                                            <div class="ms-3">
+                                                <h6 class="fw-bold mb-0">
+                                                    PC Account
+                                                </h6>
+
+                                                <small class="text-muted">
+                                                    Computer credentials
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body">
+                                        <!-- Username -->
+                                        <div class="mb-3">
+                                            <label for="pc_username" class="form-label fw-semibold">
+                                                Username
+                                            </label>
+
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light">
+                                                    <i class="fa-solid fa-user text-muted"></i>
+                                                </span>
+
+                                                <input type="text" class="form-control" id="pc_username" name="pc_username" placeholder="Enter username" autocomplete="off" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- Password -->
+                                        <div>
+                                            <label for="pc_password" class="form-label fw-semibold">
+                                                Password
+                                            </label>
+
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light">
+                                                    <i class="fa-solid fa-lock text-muted"></i>
+                                                </span>
+
+                                                <input type="text" class="form-control" id="pc_password" name="pc_password" placeholder="Enter password" autocomplete="new-password" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- EMAIL ACCOUNT -->
+                            <div class="col-md-6">
+                                <div class="card h-100 border shadow-sm rounded-3">
+                                    <div class="card-header bg-light border-0 py-3">
+                                        <div class="d-flex align-items-center">
+                                            <div class="bg-danger-subtle text-danger rounded-3 p-3">
+                                                <i class="fa-solid fa-envelope fa-lg"></i>
+                                            </div>
+
+                                            <div class="ms-3">
+                                                <h6 class="fw-bold mb-0">
+                                                    Email Account
+                                                </h6>
+
+                                                <small class="text-muted">
+                                                    Email credentials
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body">
+                                        <!-- Username -->
+                                        <div class="mb-3">
+                                            <label for="email_username" class="form-label fw-semibold">
+                                                Username
+                                            </label>
+
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light">
+                                                    <i class="fa-solid fa-user text-muted"></i>
+                                                </span>
+
+                                                <input type="text" class="form-control" id="email_username" name="email_username" placeholder="Enter email username" autocomplete="off" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- Password -->
+                                        <div>
+                                            <label
+                                                for="email_password"
+                                                class="form-label fw-semibold">
+                                                Password
+                                            </label>
+
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-light">
+                                                    <i class="fa-solid fa-lock text-muted"></i>
+                                                </span>
+
+                                                <input type="text" class="form-control" id="email_password" name="email_password" placeholder="Enter email password" autocomplete="new-password" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="modal-footer d-flex justify-content-between bg-light border-0">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="fa-solid fa-xmark me-1"></i>
+                            Cancel
+                        </button>
+
+                        <button type="submit" class="btn btn-secondary" id="btnSaveUserAccount">
+                            <i class="fa-solid fa-floppy-disk me-1" id="iBtnPminaaRequestUserAccountIcon"></i>
+                            Save Accounts
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 @endsection
 
 @section('js_content')
@@ -560,16 +718,21 @@
 
             $('#requestStatus').change(function (e) {
                 e.preventDefault();
-                status = $(this).find(':selected').data('status');
-                console.log(status);
-
-                if(status == 'requestor'){
-                    $('#buttonCreatePminaaRequest').removeClass('d-none');
+                if(sessionCheck == ''){
+                    alert('Session expired!')
+                    window.location.reload();
                 }else{
-                    $('#buttonCreatePminaaRequest').addClass('d-none');
-                }
+                    status = $(this).find(':selected').data('status');
+                    console.log(status);
 
-                dataTablePminaaRequest.draw();
+                    if(status == 'requestor'){
+                        $('#buttonCreatePminaaRequest').removeClass('d-none');
+                    }else{
+                        $('#buttonCreatePminaaRequest').addClass('d-none');
+                    }
+
+                    dataTablePminaaRequest.draw();
+                }
             });
 
             // -------------------------------------------------------------------------------------------------------------------------------------
@@ -838,17 +1001,40 @@
                         errors["internet_access"] = "Select internet access.";
                     }
 
-                    if(!$('#txtEmployeeJustification').val()){
+                    // if(!$('#txtEmployeeJustification').val()){
+                    //     errors["txtEmployeeJustification"] = "Justification is required.";
+                    // }
+
+                    let justification = $.trim($('#txtEmployeeJustification').val());
+                    if (!justification) {
                         errors["txtEmployeeJustification"] = "Justification is required.";
+                    } else if (/^n\/?a$/i.test(justification)) {
+                        errors["txtEmployeeJustification"] = "N/A is not an acceptable justification.";
+                    } else if (/^[A-Za-z]{1,4}$/.test(justification)) {
+                        errors["txtEmployeeJustification"] = "Please provide a valid justification.";
                     }
                 }
 
-                // if (step == 4) {
-                //     if ($('#tableAccountAccess tbody tr').length === 0) {
-                //         alert("Please add at least one Account Access before proceeding.");
-                //         return false;
-                //     }
-                // }
+                if (step === 4) {
+                    let $rows = $('#tableAccountAccessBody tr');
+
+                    if ($rows.length === 0) {
+                        alert('Please add at least one Account Access before proceeding.');
+                        return false;
+                    }
+
+                    let hasValidAccount = $rows.toArray().some(row => {
+                        let accountType = $(row).find('td').eq(1).text().trim();
+
+                        return accountType === 'PC Account' ||
+                            accountType === 'Email Account';
+                    });
+
+                    if (!hasValidAccount) {
+                        alert('PMINAA is only required for PC Account or Email Account requests. For other types of requests, please file a ticket through the Ticketing System ( ISS Service Request System ).');
+                        return false;
+                    }
+                }
 
                 // if (step == 5) {
                 //     if ($('#tableFolderAccess tbody tr').length === 0) {
@@ -1174,6 +1360,22 @@
                     window.location.reload();
                 }else{
                     PminaaRequestChangeApprovalStatus();
+                }
+            });
+
+            $(document).on('click', '.actionPminaaRequestUserAccountButton', function(){
+                pminaaId = $(this).attr('pminaa_details-id');
+                $("#getPminaaId").val(pminaaId);
+            });
+
+            $("#formPminaaRequestUserAccount").submit(function(event){
+                event.preventDefault();
+                console.log('123')
+                if(sessionCheck == ''){
+                    alert('Session expired!')
+                    window.location.reload();
+                }else{
+                    PminaaRequestUserAccount();
                 }
             });
         });

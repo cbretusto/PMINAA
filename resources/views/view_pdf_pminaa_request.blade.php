@@ -188,6 +188,264 @@
     </head>
 
     <body>
+        @foreach ($data as $index => $request)
+            @if ($index > 0)
+                <div style="page-break-before: always;"></div>
+            @endif
+
+            <!-- HEADER -->
+            <table class="main-header" cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>
+                        PMI Network Account Activation
+                    </td>
+                </tr>
+            </table>
+
+            <!-- EMPLOYEE INFORMATION -->
+            <div class="employee-section">
+                <table class="employee-table" width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="employee-label">
+                            Control No.
+                        </td>
+                        <td>
+                            : {{ $request['control_no'] ?? 'N/A' }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="employee-label">
+                            Employee No.
+                        </td>
+                        <td>
+                            : {{ $request['employee_no'] ?? 'N/A' }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="employee-label">
+                            Employee Name
+                        </td>
+                        <td>
+                            :
+                            {{ $request['employee_lastname'] ?? '' }},
+                            {{ $request['employee_name'] ?? '' }}
+
+                            @if (!empty($request['employee_middlename']))
+                                {{ substr($request['employee_middlename'], 0, 1) }}.
+                            @endif
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="employee-label">
+                            User Type
+                        </td>
+                        <td>
+                            : {{ $request['user_type'] ?? 'N/A' }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="employee-label">
+                            Nature of Employment
+                        </td>
+                        <td>
+                            : {{ $request['nature_of_employment'] ?? 'N/A' }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="employee-label">
+                            Position
+                        </td>
+                        <td>
+                            : {{ $request['position_job_title'] ?? 'N/A' }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="employee-label">
+                            Department / Agency
+                        </td>
+                        <td>
+                            : {{ $request['department_agency'] ?? 'N/A' }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="employee-label">
+                            Remarks
+                        </td>
+                        <td>
+                            : {{ $request['remarks'] ?? 'N/A' }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <!-- INTERNET ACCESS -->
+            <div class="section">
+                <div class="section-title">
+                    Internet Access
+                </div>
+
+                <table class="justification-table" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td class="justification-label">
+                            Justification
+                        </td>
+
+                        <td>
+                            {{ $request['internet_access']['Justification'] ?? 'N/A' }}
+                        </td>
+                    </tr>
+                </table>
+
+                @if (!empty($request['internet_access']['Details']))
+                    <table class="data-table" cellpadding="0" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th style="width: 100%;">
+                                    Details
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach ($request['internet_access']['Details'] as $item)
+                                <tr>
+                                    <td>
+                                        {{ $item }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <table class="na-table" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td>N/A</td>
+                        </tr>
+                    </table>
+                @endif
+            </div>
+
+            <!-- ACCOUNT / SYSTEM ACCESS -->
+            <div class="section">
+                <div class="section-title">
+                    Account / System Access
+                </div>
+
+                @if (!empty($request['account_system_access']['Details']))
+                    <table class="data-table" cellpadding="0" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">
+                                    Access Type
+                                </th>
+
+                                <th style="width: 30%;">
+                                    Account Name
+                                </th>
+
+                                <th style="width: 40%;">
+                                    Remarks
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach ($request['account_system_access']['Details'] as $account)
+                                <tr>
+                                    <td>
+                                        {{ $account['accountSystemAccess'] ?? 'N/A' }}
+                                    </td>
+
+                                    <td>
+                                        {{ $account['accountSystemName'] ?? 'N/A' }}
+                                    </td>
+
+                                    <td>
+                                        {{ $account['remark'] ?? 'N/A' }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <table class="na-table" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td>N/A</td>
+                        </tr>
+                    </table>
+                @endif
+            </div>
+
+            <!-- NETWORK FOLDER ACCESS -->
+            <div class="section">
+                <div class="section-title">
+                    Network Folder Access
+                </div>
+
+                @if (!empty($request['network_folder_access']['Details']))
+                    <table class="data-table" cellpadding="0" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">
+                                    Folder Access
+                                </th>
+
+                                <th style="width: 30%;">
+                                    Folder Name
+                                </th>
+
+                                <th style="width: 20%;">
+                                    Access Type
+                                </th>
+
+                                <th style="width: 30%;">
+                                    Remarks
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach ($request['network_folder_access']['Details'] as $folder)
+                                <tr>
+                                    <td>
+                                        {{ $folder['folder_access'] ?? 'N/A' }}
+                                    </td>
+
+                                    <td>
+                                        {{ $folder['folder_name'] ?? 'N/A' }}
+                                    </td>
+
+                                    <td>
+                                        {{ $folder['access_type'] ?? 'N/A' }}
+                                    </td>
+
+                                    <td>
+                                        {{ $folder['remark'] ?? 'N/A' }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <table class="na-table" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td>N/A</td>
+                        </tr>
+                    </table>
+                @endif
+            </div>
+        @endforeach
+    </body>
+
+        {{-- <body>
         <!-- =====================================================
         ========================= HEADER =========================
         ========================================================== -->
@@ -450,6 +708,6 @@
                 </table>
             @endif
         </div>
-    </body>
+    </body> --}}
 
 </html>

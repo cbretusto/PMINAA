@@ -6,7 +6,6 @@ use App\Mail\WelcomeMail;
 use App\Models\EmailLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use PDF;
 
 use App\Models\PminaaDetails;
 use App\Models\PminaaApprover;
@@ -34,6 +33,7 @@ use App\Interfaces\PminaaRequestInterface;
 class PminaaRequestRepository implements PminaaRequestInterface
 {
     public function getAllPminaaRequestDataRepository($request, $rapidxUserId, $rapidxDepartmentId, array $conformanceApprovalIds){
+        // dd($conformanceApprovalIds);
         return PminaaDetails::with([
             'rapidx_user_info',
             'approvers_info.section_head_info',
@@ -98,7 +98,7 @@ class PminaaRequestRepository implements PminaaRequestInterface
                 $query
                     ->where('approval_status', 4)
                     ->whereHas('approvers_info', function ($approver) use ($rapidxUserId) {
-                        $approver->where('iss_hardware', $rapidxUserId);
+                        $approver->orWhere('iss_hardware', $rapidxUserId);
                     });
             }
         )
@@ -145,6 +145,14 @@ class PminaaRequestRepository implements PminaaRequestInterface
             }
         )
         ->get();
+    }
+
+    public function findSameEmployeeRequestsRepository($employeeNumbers){
+        return PminaaDetails::whereIn('employee_no', $employeeNumbers)
+            ->where('status', 0)
+            ->where('logdel', 0)
+            ->get()
+            ->groupBy('employee_no');
     }
 
     public function getSystemonePmiSubconEmployeeRepository($user_type){
@@ -249,6 +257,7 @@ class PminaaRequestRepository implements PminaaRequestInterface
         $approvalStatus     = 0;
         $remarkValue        = '';
         // dd($pminaaData);
+
         if (empty($pminaaId)) {
             if(empty($controlNo)) {
                 return false;
@@ -291,20 +300,55 @@ class PminaaRequestRepository implements PminaaRequestInterface
             }
         }
         // dd($getControlNo);
+
         $requestedBy = RapidxUser::where('id', $requestedBy)
         ->where('user_stat', 1)
         ->get('email');
 
         $pminaaDataForEmail['approved'] = 'ISS Hardware';
         $pminaaDataForEmail['control_no'] = $getControlNo;
-        $this->mapEmailNotification($pminaaDataForEmail, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id, $remarkValue); // CHAN
+        $this->mapEmailNotification($pminaaDataForEmail, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id, $remarkValue);
+        return true;
+    }
+
+    public function pminaaRequestUserAccountRepository( ?string $pminaaId, array $data, $rapidx_user_id): bool {
+        $pcUsername = trim($data['pc_username'] ?? '');
+        $pcPassword = trim($data['pc_password'] ?? '');
+
+        $emailUsername = trim($data['email_username'] ?? '');
+        $emailPassword = trim($data['email_password'] ?? '');
+
+        // PC Account
+        $pcAccount = null;
+        if ($pcUsername !== '' || $pcPassword !== '') {
+            $pcAccount = json_encode([
+                'username' => $pcUsername,
+                'password' => $pcPassword,
+            ]);
+        }
+
+        // Email Account
+        $emailAccount = null;
+        if ($emailUsername !== '' || $emailPassword !== '') {
+            $emailAccount = json_encode([
+                'username' => $emailUsername,
+                'password' => $emailPassword,
+            ]);
+        }
+
+        PminaaDetails::where('id', $pminaaId)->update([
+            'pc_account'    => $pcAccount,
+            'email_account' => $emailAccount,
+            'updated_at'    => now(),
+        ]);
+
         return true;
     }
 
     private function mapPminaaControlNo(){
         $getLastControlNo   = PminaaDetails::orderBy('control_no', 'DESC')->where('logdel', 0)->where('status', 0)->first();
-
         $controlNoFormat    = "ISS-NAF-".NOW()->format('ym')."-";
+
         if ($getLastControlNo == null){
             $newControlNo   = $controlNoFormat.'001';
         }elseif(explode('-',$getLastControlNo->control_no)[2] != NOW()->format('ym')){
@@ -478,20 +522,20 @@ class PminaaRequestRepository implements PminaaRequestInterface
                     $dateColumn   => now()->format('Y-m-d H:i:s'),
                     $remarkColumn => $remarkValue,
                     'updated_at'  => now()
-                ]); // CHAN
+                ]);
         }else{
             PminaaApprover::where('pminaa_details_id', $pminaaId)
                 ->update([
                     $dateColumn   => now()->format('Y-m-d H:i:s'),
                     $remarkColumn => $remarkValue,
                     'updated_at'  => now()
-                ]); // CHAN
+                ]);
         }
 
         PminaaDetails::where('id', $pminaaId)->update([
             'approval_status' => $approvalStatus,
             'updated_at'      => now(),
-        ]); // CHAN
+        ]);
 
         $nextStatus = $approvalStatus + 1;
         $step = $statusMap[$nextStatus] ?? null;
@@ -527,6 +571,9 @@ class PminaaRequestRepository implements PminaaRequestInterface
         $accountAccess = isset($pminaa['account_system_access']) ? json_decode($pminaa['account_system_access'], true) : null;
         $folderAccess = isset($pminaa['network_folder_access']) ? json_decode($pminaa['network_folder_access'], true) : null;
 
+        $pcAccount = isset($pminaa['pc_account']) ? json_decode($pminaa['pc_account'], true) : null;
+        $emailAccount = isset($pminaa['email_account']) ? json_decode($pminaa['email_account'], true) : null;
+
         if (isset($accountAccess['Details']) && is_array($accountAccess['Details'])) {
             usort($accountAccess['Details'], function ($a, $b) {
                 return strcasecmp( $a['accountSystemAccess'] ?? '', $b['accountSystemAccess'] ?? ''
@@ -554,7 +601,11 @@ class PminaaRequestRepository implements PminaaRequestInterface
             'internet_access'       => $pminaa->internet_access ?? null,
             'account_system_access' => $accountAccess ?? null,
             'network_folder_access' => $folderAccess ?? null,
+            'pc_account'            => $pcAccount ?? null,
+            'email_account'         => $emailAccount ?? null,
         ];
+
+        // dd($pminaaData);
 
         $test = $this->getConformanceApprovalRepository();
         // dd($test->pluck('rapidx_user_id')->toArray());
@@ -575,7 +626,7 @@ class PminaaRequestRepository implements PminaaRequestInterface
         //     $approverData
         // );
 
-        $this->mapEmailNotification($pminaaData, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id, $remarkValue); // CHAN
+        $this->mapEmailNotification($pminaaData, $requestedBy, $approvalStatus, $approverData, $rapidx_user_id, $remarkValue);
         return true;
     }
 
@@ -909,43 +960,60 @@ class PminaaRequestRepository implements PminaaRequestInterface
         return $result;
     }
 
-    public function viewPdfPminaaRequestRepository($id){
-        $query = PminaaDetails::where('id', $id)->firstOrFail();
+    public function viewPdfPminaaRequestRepository($ids){
+        $ids = collect(explode(',', $ids))
+        ->map(function ($id) {
+            return trim($id);
+        })
+        ->filter()
+        ->unique()
+        ->values();
 
-        $data = $query->toArray();
-
-        $data['internet_access'] = json_decode(
-            $data['internet_access'],
-            true
-        );
-
-        $data['account_system_access'] = json_decode(
-            $data['account_system_access'],
-            true
-        );
-
-        $data['network_folder_access'] = json_decode(
-            $data['network_folder_access'],
-            true
-        );
-
-        // ASC by accountSystemAccess
-        if (!empty($data['account_system_access']['Details'])) {
-            usort($data['account_system_access']['Details'], function ($a, $b) {
-                return strcasecmp(
-                    $a['accountSystemAccess'] ?? '',
-                    $b['accountSystemAccess'] ?? ''
-                );
-            });
+        if ($ids->isEmpty()) {
+            abort(404);
         }
 
-        $pdf = PDF::loadView('view_pdf_pminaa_request', [
-            'data' => $data,
-        ]);
+        $queries = PminaaDetails::whereIn('id', $ids)
+            ->get();
 
-        $pdf->setPaper('A4', 'Portrait');
+        if ($queries->isEmpty()) {
+            abort(404);
+        }
 
-        return $pdf->stream();
+        $data = $queries->map(function ($query) {
+            $data = $query->toArray();
+
+            $data['internet_access'] = json_decode(
+                $data['internet_access'] ?? '{}',
+                true
+            );
+
+            $data['account_system_access'] = json_decode(
+                $data['account_system_access'] ?? '{}',
+                true
+            );
+
+            $data['network_folder_access'] = json_decode(
+                $data['network_folder_access'] ?? '{}',
+                true
+            );
+
+            // ASC by accountSystemAccess
+            if (!empty($data['account_system_access']['Details'])) {
+                usort(
+                    $data['account_system_access']['Details'],
+                    function ($a, $b) {
+                        return strcasecmp(
+                            $a['accountSystemAccess'] ?? '',
+                            $b['accountSystemAccess'] ?? ''
+                        );
+                    }
+                );
+            }
+            return $data;
+        })->values();
+
+        return $data;
     }
 
     public function approveAllPendingRequestsRepository($presidentApproval){
@@ -985,19 +1053,13 @@ class PminaaRequestRepository implements PminaaRequestInterface
                 'approval_status' => $currentApprovalStatus + 1,
             ]);
 
-            if (
-                $approver->section_head == $presidentApproval &&
-                $currentApprovalStatus == 0
-            ) {
+            if ( $approver->section_head == $presidentApproval && $currentApprovalStatus == 0){
                 $approver->update([
                     'section_head_approved_by_date' => now(),
                 ]);
             }
 
-            if (
-                $approver->department_head == $presidentApproval &&
-                $currentApprovalStatus == 1
-            ) {
+            if ( $approver->department_head == $presidentApproval && $currentApprovalStatus == 1 ){
                 $approver->update([
                     'department_head_approved_by_date' => now(),
                 ]);

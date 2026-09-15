@@ -130,61 +130,6 @@ const GetPminaaApprover = (elements) => {
     ajaxRequest(ajaxGetPminaaApprover);
 };
 
-
-// const GetPminaaApprover = (elements) => {
-//     const ajaxGetPminaaApprover = {
-//         url: 'get_pminaa_approver',
-//         method: 'GET',
-//         successCallback: (response) => {
-//             const pminaaApprover = response['pminaaApprover'];
-
-//             if (pminaaApprover.length > 0) {
-//                 elements.each(function () {
-//                     const $select = $(this);
-//                     const selectIndex = parseInt($select.attr('index'));
-
-//                     let options = ([3, 4].includes(selectIndex))
-//                                     ? ''
-//                                     : '<option value="" disabled selected>-- Select Approver --</option>';
-
-//                         pminaaApprover.forEach(item => {
-//                             let classifications = item.classification;
-
-//                             if (typeof classifications === 'string') {
-//                                 try {
-//                                     classifications = JSON.parse(classifications);
-//                                 } catch (e) {
-//                                     classifications = classifications.split(',');
-//                                 }
-//                             }
-
-//                             if (!Array.isArray(classifications)) {
-//                                 classifications = [classifications];
-//                             }
-
-//                             classifications = classifications.map(Number);
-
-//                             const user = item.user_management_rapidx_user_info;
-
-//                             if (classifications.includes(Number(selectIndex))) {
-//                                 options += `<option value="${user.id}">${user.name}</option>`;
-//                             }
-//                         });
-
-//                     $select.html(options);
-//                 });
-//             } else {
-//                 elements.html('<option value="" disabled>No approvers found</option>');
-//             }
-//         },
-//         errorCallback: () => {
-//             elements.html('<option value="" disabled>Error loading. Reload page.</option>');
-//         }
-//     };
-
-//     ajaxRequest(ajaxGetPminaaApprover);
-// }
-
 const GetAccountFolderAccess = (elements) => {
     const ajaxGetAccountFolderAccess = {
         url: 'get_account_system_folder_access',
@@ -459,4 +404,43 @@ function ApproveAllPendingRequests(presidentApproval){
         }
     };
     ajaxRequest(ajaxPminaaRequestChangeApprovalStatus);
+}
+
+function PminaaRequestUserAccount() {
+    const ajaxPminaaRequestUserAccount = {
+        url: "pminaa_request_user_account",
+        method: "POST",
+        data: $('#formPminaaRequestUserAccount').serialize(),
+        dataType: "json",
+        beforeSendCallback: function(xhr) {
+            $("#iBtnPminaaRequestUserAccountIcon").addClass('spinner-border spinner-border-sm');
+            $("#btnSaveUserAccount").addClass('disabled');
+            $("#iBtnPminaaRequestUserAccountIcon").removeClass('fa fa-check');
+        },
+        successCallback: (response) => {
+            if(response['hasError'] == 0) {
+                clearValidationErrors();
+                $('#modalPminaaRequestUserAccount').modal('hide');
+                toastr.success('Successfully saved!');
+                dataTablePminaaRequest.draw();
+            }else if(response['hasError'] == 1) {
+                toastr.error('Saving failed!');
+                $('#modalPminaaRequestUserAccount').modal('hide');
+            }
+
+            $("#iBtnPminaaRequestUserAccountIcon").removeClass('spinner-border spinner-border-sm');
+            $("#btnSaveUserAccount").removeClass('disabled');
+            $("#iBtnPminaaRequestUserAccountIcon").addClass('fa fa-check');
+        },
+        errorCallback: (xhr) => {
+            handleValidatorErrors(xhr.responseJSON.errors);
+            toastr.error('Saving failed!');
+
+            $("#iBtnPminaaRequestUserAccountIcon").removeClass('spinner-border spinner-border-sm');
+            $("#btnSaveUserAccount").removeClass('disabled');
+            $("#iBtnPminaaRequestUserAccountIcon").addClass('fa fa-check');
+        }
+    };
+
+    ajaxRequest(ajaxPminaaRequestUserAccount);
 }

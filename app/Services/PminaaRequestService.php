@@ -3,9 +3,9 @@
 namespace App\Services;
 
 // use Illuminate\Support\Collection;
+use PDF;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-
 use Yajra\DataTables\Facades\DataTables;
 
 use App\Interfaces\PminaaRequestInterface;
@@ -54,6 +54,14 @@ class PminaaRequestService
         $conformance_approval   = $this->pminaaRequestInterfaceInterface->getConformanceApprovalRepository();
         $conformanceApprovalIds = $conformance_approval->pluck('rapidx_user_id')->toArray();
         $pminaa_details         = $this->pminaaRequestInterfaceInterface->getAllPminaaRequestDataRepository($request,$rapidx_user_id,$rapidx_department_id,$conformanceApprovalIds);
+        $employeeNumbers = $pminaa_details
+            ->pluck('employee_no')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $sameEmployeeRequests = $this->pminaaRequestInterfaceInterface
+            ->findSameEmployeeRequestsRepository($employeeNumbers);
 
         $pminaa_details = $pminaa_details->sort(function ($a, $b) use ($rapidx_user_id, $conformanceApprovalIds){
             $getApprovalPriority = function ($detail) use ( $rapidx_user_id, $conformanceApprovalIds ){
@@ -115,7 +123,7 @@ class PminaaRequestService
         ->values();
 
         return DataTables::of($pminaa_details)
-            ->addColumn('action',function ($pminaa_detail) use ( $rapidx_user_id, $steps, $approve_values, $disapprove_values, $pminaa_access_for_conformance, $conformanceApprovalIds ){
+            ->addColumn('action',function ($pminaa_detail) use ( $rapidx_user_id, $steps, $approve_values, $disapprove_values, $pminaa_access_for_conformance, $conformanceApprovalIds, $sameEmployeeRequests ){
                     $btns = '<center>';
                     $btns .= '
                         <a
@@ -144,8 +152,6 @@ class PminaaRequestService
                         }
                     }
 
-                    $btns .= '<br>';
-
                     $currentStepKey = null;
                     $approveVal = null;
                     $disapproveVal = null;
@@ -160,6 +166,7 @@ class PminaaRequestService
                     }
 
                     if($currentStepKey && $pminaa_detail->status == 0){
+                        $btns .= '<br>';
                         $currentApproverId = null;
                         if(!$pminaa_detail->approvers_info->isEmpty()){
                             $approver = $pminaa_detail->approvers_info->first();
@@ -169,6 +176,7 @@ class PminaaRequestService
                         $canApprove = ($currentApproverId == $rapidx_user_id &&$pminaa_detail->approval_status <= 3);
                         $canConform =
                             (
+                                ($pminaa_detail->pc_account != '' || $pminaa_detail->email_account != '') &&
                                 $pminaa_detail->approval_status == 4 &&
                                 in_array(
                                     (int) $rapidx_user_id,
@@ -208,8 +216,46 @@ class PminaaRequestService
                                     <i class="fa-solid fa-thumbs-down"></i>
                                 </button>
                             ';
+                        }else{
+                            $btns .= '
+                                <button
+                                    type="button"
+                                    class="btn btn-secondary btn-sm w-100 actionPminaaRequestUserAccountButton"
+                                    pminaa_details-id="' . $pminaa_detail->id . '"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalPminaaRequestUserAccount"
+                                    title="User Account">
+                                    <i class="fa-solid fa-user"></i>
+                                </button>
+                            ';
                         }
                     }
+
+                    //====================================================================================
+                    //====================================================================================
+                    //====================================================================================
+                    $employeeRequests = $sameEmployeeRequests->get(
+                        $pminaa_detail->employee_no,
+                        collect()
+                    );
+                    $employeeRequestCount = $employeeRequests->count();
+                    $employeeRequestIds = $employeeRequests
+                        ->pluck('id')
+                        ->implode(',');
+
+                    if($employeeRequestCount > 1){
+                        $btns .= '<br>';
+                        $btns .= '
+                            <a
+                                href="view_pdf_pminaa_request/' . $employeeRequestIds . '"
+                                target="_blank"
+                                class="btn btn-dark btn-sm mb-2 w-100"
+                                title="View PMINAA Request History">
+                                <i class="fa fa-file-pdf"></i>
+                            </a>
+                        ';
+                    }
+
                     $btns .= '</center>';
                     return $btns;
                 }
@@ -328,9 +374,34 @@ class PminaaRequestService
         $rapidx_user_id = $_SESSION['rapidx_user_id'];
 
         return DB::transaction(function () use ( $pminaaId, $data, $rapidx_user_id) {
-
             $result = $this->pminaaRequestInterfaceInterface
                 ->createUpdatePminaaRequestRepository(
+                    $pminaaId,
+                    $data,
+                    $rapidx_user_id
+                );
+
+            if ($result === false) {
+                return [
+                    'hasError' => 1,
+                    'message' => 'Saving failed because control number is empty.'
+                ];
+            }
+
+            return [
+                'hasError' => 0,
+                'message' => 'Successfully saved.'
+            ];
+        }, 5);
+    }
+
+    public function pminaaRequestUserAccountService( ?string $pminaaId, array $data ): array {
+        session_start();
+        $rapidx_user_id = $_SESSION['rapidx_user_id'];
+
+        return DB::transaction(function () use ( $pminaaId, $data, $rapidx_user_id) {
+            $result = $this->pminaaRequestInterfaceInterface
+                ->pminaaRequestUserAccountRepository(
                     $pminaaId,
                     $data,
                     $rapidx_user_id
@@ -365,8 +436,19 @@ class PminaaRequestService
         }, 5);
     }
 
-    public function viewPdfPminaaRequestService($id){
-        return $this->pminaaRequestInterfaceInterface->viewPdfPminaaRequestRepository($id);
+    public function viewPdfPminaaRequestService($ids){
+        // return $this->pminaaRequestInterfaceInterface->viewPdfPminaaRequestRepository($id);
+
+        $data = $this->pminaaRequestInterfaceInterface
+        ->viewPdfPminaaRequestRepository($ids);
+
+        $pdf = PDF::loadView('view_pdf_pminaa_request', [
+            'data' => $data,
+        ]);
+
+        $pdf->setPaper('A4', 'Portrait');
+
+        return $pdf->stream();
     }
 
     public function approveAllPendingRequestsService($presidentApproval){

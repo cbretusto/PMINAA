@@ -106,6 +106,153 @@
             @if ((int) $approval_status == 5)
                 @php
                     $details = $data['account_system_access']['Details'] ?? [];
+
+                    $isPMI = ($data['user_type'] ?? '') === 'PMI';
+
+                    $systems = collect($details)
+                        ->pluck('accountSystemAccess')
+                        ->filter()
+                        ->unique();
+
+                    $availableSystems = [];
+
+                    if ($systems->contains('Rapid')) {
+                        $availableSystems[] = 'Rapid';
+                    }
+
+                    if ($isPMI && $systems->contains('SystemOne')) {
+                        $availableSystems[] = 'SystemOne';
+                    }
+
+                    if ($isPMI && $systems->contains('RapidX')) {
+                        $availableSystems[] = 'RapidX';
+                    }
+
+                    // Account Credentials
+                    $pcAccount = $data['pc_account'] ?? null;
+                    $emailAccount = $data['email_account'] ?? null;
+                @endphp
+
+                @if (count($availableSystems) > 0)
+                    <div style="margin: 10px 0; padding: 14px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+                        <div style="margin-bottom: 18px; color: #1e293b; font-size: 17px; font-weight: 600;">
+                            System Access Credentials -
+                            {{ implode(', ', $availableSystems) }}
+                        </div>
+
+                        <div style="padding: 24px; background: #f8fafc;">
+                            {{-- Username --}}
+                            <div style="margin-bottom: 14px; padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+                                <div style="margin-bottom: 7px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Username
+                                </div>
+
+                                <div style="color: #0f172a; font-size: 15px; font-weight: 600; word-break: break-word;">
+                                    {{ $username ?? '' }}
+                                </div>
+                            </div>
+
+
+                            {{-- Password --}}
+                            <div style="padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+                                <div style="margin-bottom: 7px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Password
+                                </div>
+                                <div style="color: #0f172a; font-size: 15px; font-weight: 600; word-break: break-word;">
+                                    {{ $password ?? 'pmi1234' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if (!empty($pcAccount))
+                    <div style="margin: 10px 0; padding: 14px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+                        <div style="margin-bottom: 18px; color: #1e293b; font-size: 17px; font-weight: 600;">
+                            PC Account Credentials
+                        </div>
+
+                        <div style="padding: 24px; background: #f8fafc;">
+                            {{-- Username --}}
+                            <div style="margin-bottom: 14px; padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+                                <div style="margin-bottom: 7px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Username
+                                </div>
+
+                                <div style="color: #0f172a; font-size: 15px; font-weight: 600; word-break: break-word;">
+                                    {{ $pcAccount['username'] ?? '' }}
+                                </div>
+                            </div>
+
+                            {{-- Password --}}
+                            <div style="padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+                                <div style="margin-bottom: 7px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Password
+                                </div>
+
+                                <div style="color: #0f172a; font-size: 15px; font-weight: 600; word-break: break-word;">
+                                    {{ $pcAccount['password'] ?? '' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
+                @if (!empty($emailAccount))
+                    <div style="margin: 10px 0; padding: 14px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+                        <div style="margin-bottom: 18px; color: #1e293b; font-size: 17px; font-weight: 600;">
+                            Email Account Credentials
+                        </div>
+
+                        <div style="padding: 24px; background: #f8fafc;">
+                            {{-- Username --}}
+                            <div style="margin-bottom: 14px; padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+                                <div style="margin-bottom: 7px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Username
+                                </div>
+
+                                <div style="color: #0f172a; font-size: 15px; font-weight: 600; word-break: break-word;">
+                                    {{ $emailAccount['username'] ?? '' }}
+                                </div>
+                            </div>
+
+                            {{-- Password --}}
+                            {{-- <div style="padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+                                <div style="margin-bottom: 7px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                    Password
+                                </div>
+
+                                <div style="color: #0f172a; font-size: 15px; font-weight: 600; word-break: break-word;">
+                                    {{ $emailAccount['password'] ?? '' }}
+                                </div>
+                            </div> --}}
+                        </div>
+                    </div>
+                @endif
+
+                @if (!empty($pcAccount) || !empty($emailAccount))
+                    <div style="display: flex; align-items: flex-start; margin-top: 16px; padding: 12px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;">
+                        <div style="color: #92400e; font-size: 12px; line-height: 1.5;">
+                            <strong style="font-weight: 700;">
+                                🔒 Keep Your Credentials Secure
+                            </strong>
+
+                            <div>
+                                Please do not share your username or password with others.
+                            </div>
+
+                            <div style="margin-top: 4px;">
+                                <strong>Note:</strong>
+                                For security purposes, you are required to change your password upon your first login.
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            @endif
+
+            {{-- @if ((int) $approval_status == 5)
+                @php
+                    $details = $data['account_system_access']['Details'] ?? [];
                     $isPMI = ($data['user_type'] ?? '') === 'PMI';
                     $systems = collect($details)->pluck('accountSystemAccess')->filter()->unique();
                     $availableSystems = [];
@@ -132,7 +279,7 @@
                         </div>
 
                         <div style="padding: 24px; background: #f8fafc;">
-                            {{-- Username --}}
+                            <!-- Username -->
                             <div
                                 style=" margin-bottom: 14px; padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
                                 <div
@@ -146,7 +293,7 @@
                                 </div>
                             </div>
 
-                            {{-- Password --}}
+                            <!-- Password -->
                             <div
                                 style=" padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
                                 <div
@@ -160,15 +307,15 @@
                                 </div>
                             </div>
 
-                            {{-- Security Notice --}}
-                            {{-- <div style=" display: flex; align-items: flex-start; margin-top: 16px; padding: 12px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;">
+                            <!-- Security Notice -->
+                            <!-- <div style=" display: flex; align-items: flex-start; margin-top: 16px; padding: 12px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;">
                                     <div style=" color: #92400e; font-size: 12px; line-height: 1.5;">
                                         <strong style="font-weight: 700;">
                                             🔒 Keep your credentials secure.
                                         </strong>
                                         Please do not share your username or password with others.
                                     </div>
-                                </div> --}}
+                                </div> -->
 
                             <div
                                 style="display: flex; align-items: flex-start; margin-top: 16px; padding: 12px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px;">
@@ -182,7 +329,7 @@
                         </div>
                     </div>
                 @endif
-            @endif
+            @endif --}}
         </tr>
 
         <!-- Internet Access -->

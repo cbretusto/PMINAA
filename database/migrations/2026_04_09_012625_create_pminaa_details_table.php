@@ -31,6 +31,8 @@ class CreatePminaaDetailsTable extends Migration
             $table->json('internet_access')->nullable();
             $table->json('account_system_access')->nullable();
             $table->json('network_folder_access')->nullable();
+            $table->json('pc_account')->nullable();
+            $table->json('email_account')->nullable();
             $table->string('requested_by')->nullable();
             $table->unsignedTinyInteger('approval_status')
                     ->default(1)

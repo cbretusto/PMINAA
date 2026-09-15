@@ -59,6 +59,14 @@ class PminaaRequestController extends Controller
         return response()->json($result);
     }
 
+    public function pminaaRequestUserAccount(PminaaRequestRequest $request){
+        $pminaaId = $request->get_pminaa_id;
+        $data = $request->all();
+        $result = $this->pminaaRequestServiceService->pminaaRequestUserAccountService($pminaaId, $data);
+
+        return response()->json($result);
+    }
+
     public function getPminaaRequestInfoById(Request $request){
         $pminaaId = $request->pminaaId;
         $pminaaRequestInfo = $this->pminaaRequestServiceService->getPminaaRequestInfoByIdService($pminaaId);
@@ -77,8 +85,8 @@ class PminaaRequestController extends Controller
         }
     }
 
-    public function viewPdfPminaaRequest($id){
-        return $this->pminaaRequestServiceService->viewPdfPminaaRequestService($id);
+    public function viewPdfPminaaRequest($ids){
+        return $this->pminaaRequestServiceService->viewPdfPminaaRequestService($ids);
     }
 
     public function approveAllPendingRequests(Request $request){
