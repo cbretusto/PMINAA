@@ -173,10 +173,10 @@ class PminaaRequestService
                             $currentApproverId = $approver->{$currentStepKey} ?? null;
                         }
 
-                        $canApprove = ($currentApproverId == $rapidx_user_id &&$pminaa_detail->approval_status <= 3);
+                        $canApprove = ($currentApproverId == $rapidx_user_id && $pminaa_detail->approval_status <= 3);
+                        $forUserAccountCredentials = ($pminaa_detail->pc_account == '' || $pminaa_detail->email_account == '');
                         $canConform =
                             (
-                                ($pminaa_detail->pc_account != '' || $pminaa_detail->email_account != '') &&
                                 $pminaa_detail->approval_status == 4 &&
                                 in_array(
                                     (int) $rapidx_user_id,
@@ -186,7 +186,7 @@ class PminaaRequestService
                                 $pminaa_access_for_conformance == 1
                             );
 
-                        if($canApprove || $canConform){
+                        if($canApprove || $canConform && !$forUserAccountCredentials){
                             $btns .= '
                                 <button
                                     type="button"
@@ -217,17 +217,19 @@ class PminaaRequestService
                                 </button>
                             ';
                         }else{
-                            $btns .= '
-                                <button
-                                    type="button"
-                                    class="btn btn-secondary btn-sm w-100 actionPminaaRequestUserAccountButton"
-                                    pminaa_details-id="' . $pminaa_detail->id . '"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalPminaaRequestUserAccount"
-                                    title="User Account">
-                                    <i class="fa-solid fa-user"></i>
-                                </button>
-                            ';
+                            if($forUserAccountCredentials && $canConform){
+                                $btns .= '
+                                    <button
+                                        type="button"
+                                        class="btn btn-secondary btn-sm w-100 actionPminaaRequestUserAccountButton"
+                                        pminaa_details-id="' . $pminaa_detail->id . '"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalPminaaRequestUserAccount"
+                                        title="User Account">
+                                        <i class="fa-solid fa-user"></i>
+                                    </button>
+                                ';
+                            }
                         }
                     }
 
