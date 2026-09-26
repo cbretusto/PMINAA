@@ -146,6 +146,340 @@
 
     <!-- Create/Update PMINAA Modal Start -->
     <div class="modal fade" id="modalCreateUpdatePminaaRequest" data-bs-keyboard="false" data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl-custom modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg overflow-hidden" style="border-radius: 1.25rem;">
+
+                <!-- Modern Icon Header -->
+                <div class="modal-header bg-gradient text-white1 px-4 py-3" style="background: linear-gradient(135deg, #1e1b4b 100%, #312e81 0%);">
+                    <h4 class="modal-title fs-5 fw-bold d-flex align-items-center text-white1">
+                        <div class="bg-indigo bg-opacity-25 p-2 rounded-circle me-3 d-flex align-items-center justify-content-center text-warning shadow-sm" style="width: 40px; height: 40px;">
+                            <i class="fas fa-file-signature fa-lg"></i>
+                        </div>
+                        <div>
+                            <span class="d-block" style="font-size: 1.05rem;">PMINAA Request Portal</span>
+                            <small class="text-black-50 fw-normal" style="font-size: 0.75rem;">Manage employee access levels & network provisions</small>
+                        </div>
+                    </h4>
+                    <!-- <button type="button" class="btn-close btn-close-white shadow-none" data-bs-dismiss="modal" aria-label="Close"></button> -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-4 bg-light" style="max-height: 82vh; overflow-y: auto;">
+                    <form id="formPminaaRequest">
+                        @csrf
+                        <input type="text" class="input_hidden" name="pminaa_id" placeholder="PMINAA Id" id="txtPminaaId" readonly>
+                        <input type="text" class="input_hidden" name="user_login" placeholder="User Login" id="txtUserLogin" value="{{ $sessionCheck }}" readonly>
+
+                        <!-- Smart Wizard Modern Container -->
+                        <div id="smartwizard" data-color="purple" class="bg-white p-1 rounded-4 shadow-sm border-0">
+
+                            <!-- Icon-Enhanced Navigation Tabs -->
+                            <ul class="nav gap-1 p-1 bg-body-dark rounded-4 shadow-inner" data-color="forest">
+                                <li class="nav-item col-6">
+                                    <a class="nav-link nav-smartwizard fw-semibold py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-center gap-2">
+                                        <div class="step-badge d-inline-flex align-items-center justify-content-center bg-white text-dark shadow-sm rounded-circle fw-bold" style="width: 26px; height: 26px; font-size: 0.75rem;">1</div>
+                                        <span class="small d-flex align-items-center gap-1">
+                                            <i class="fas fa-user-circle text-light"></i>PERSONAL INFO.
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="nav-item col-6">
+                                    <a class="nav-link nav-smartwizard fw-semibold py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-center gap-2">
+                                        <div class="step-badge d-inline-flex align-items-center justify-content-center bg-white text-dark shadow-sm rounded-circle fw-bold" style="width: 26px; height: 26px; font-size: 0.75rem;">2</div>
+                                        <span class="small d-flex align-items-center gap-1"><i class="fas fa-briefcase text-danger"></i> EMPLOYMENT</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item col-6">
+                                    <a class="nav-link nav-smartwizard fw-semibold py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-center gap-2">
+                                        <div class="step-badge d-inline-flex align-items-center justify-content-center bg-white text-dark shadow-sm rounded-circle fw-bold" style="width: 26px; height: 26px; font-size: 0.75rem;">3</div>
+                                        <span class="small d-flex align-items-center gap-1"><i class="fas fa-globe text-info"></i> INTERNET</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item col-6">
+                                    <a class="nav-link nav-smartwizard fw-semibold py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-center gap-2">
+                                        <div class="step-badge d-inline-flex align-items-center justify-content-center bg-white text-dark shadow-sm rounded-circle fw-bold" style="width: 26px; height: 26px; font-size: 0.75rem;">4</div>
+                                        <span class="small d-flex align-items-center gap-1"><i class="fas fa-key text-warning"></i> ACCOUNTS</span>
+                                    </a>
+                                </li>
+                                <li class="nav-item col-6">
+                                    <a class="nav-link nav-smartwizard fw-semibold py-2 px-3 rounded-3 text-dark d-flex align-items-center justify-content-center gap-2">
+                                        <div class="step-badge d-inline-flex align-items-center justify-content-center bg-white text-dark shadow-sm rounded-circle fw-bold" style="width: 26px; height: 26px; font-size: 0.75rem;">5</div>
+                                        <span class="small d-flex align-items-center gap-1"><i class="fas fa-folder-open text-dark"></i> FOLDERS</span>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <!-- STEP 1 - PERSONAL INFO. -->
+                                <div id="step-1" class="tab-pane">
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-id-badge text-primary"></i> User Type:</label>
+                                            <select class="form-select border-light-subtle shadow-none py-2" id="slctUserType" name="user_type">
+                                                <option value="" selected disabled>-- Select User Type --</option>
+                                                <option value="PMI">PMI Employee</option>
+                                                <option value="SUBCON">SUBCON Employee</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-industry text-primary"></i> Factory:</label>
+                                            <select class="form-select border-light-subtle shadow-none py-2" id="slctFactory" name="factory">
+                                                <option value="" selected disabled>-- Select Factory --</option>
+                                                <option value="1">Factory 1/2</option>
+                                                <option value="3">Factory 3</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 d-flex flex-column">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-hashtag text-secondary"></i> Employee No:</label>
+                                            <select class="form-select select2bs5 get_pmi_subcon_employee border-light-subtle shadow-none" id="slctEmployeeNo" name="employee_no">
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-user text-secondary"></i> Last Name:</label>
+                                            <input type="text" class="form-control bg-white border-light-subtle shadow-none" id="txtEmployeeLastName" name="employee_lastname" placeholder="Last Name" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-user text-secondary"></i> First Name:</label>
+                                            <input type="text" class="form-control bg-white border-light-subtle shadow-none" id="txtEmployeeName" name="employee_name" placeholder="First Name" readonly>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-user text-secondary"></i> Middle Name:</label>
+                                            <input type="text" class="form-control bg-white border-light-subtle shadow-none" id="txtEmployeeMiddleName" name="employee_middlename" placeholder="Middle Name" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                        <div class="position-relative text-center my-3">
+                                            <hr class="text-muted opacity-25">
+                                            <span class="position-absolute top-50 start-50 translate-middle px-3 bg-white text-uppercase small fw-bold text-dark tracking-widest d-flex align-items-center gap-1 shadow-sm rounded-pill py-1 border" style="font-size: 0.7rem;">
+                                                <i class="fas fa-user-shield"></i> APPROVERS ASSIGNMENT
+                                            </span>
+                                        </div>
+
+                                        <div class="col-md-6 d-flex flex-column mb-3">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-user-tie text-dark"></i> Section Head:</label>
+                                            <select class="form-select select2bs5 get_approvers border-light-subtle shadow-none" index="1" id="slctSectionHeadApprover" name="section_head">
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 d-flex flex-column mb-3">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-user-shield text-dark"></i> Department Head:</label>
+                                            <select class="form-select select2bs5 get_approvers border-light-subtle shadow-none" index="2" id="slctDepartmentHeadApprover" name="department_head">
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-6 d-flex flex-column">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-user-cog text-dark"></i> ISS Manager:</label>
+                                            <select class="form-select get_approvers class-disabled border-light-subtle shadow-none" index="3" id="slctIssManagerApprover" name="iss_manager">
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6 d-flex flex-column">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-user-check text-dark"></i> Admin AVP:</label>
+                                            <select class="form-select get_approvers class-disabled border-light-subtle shadow-none" index="4" id="slctAdminAvpApprover" name="admin_avp">
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <hr class="text-muted opacity-25 my-4">
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <button type="button" class="btn btn-dark px-4 py-2 rounded-2 shadow-sm d-flex align-items-center gap-2" id="btnNextStep1">Next Step <i class="fas fa-arrow-right fa-xs"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- STEP 2 - NATURE OF EMPLOYMENT -->
+                                <div id="step-2" class="tab-pane">
+                                    <p class="mb-2 fw-semibold text-secondary small text-uppercase d-flex align-items-center gap-1"><i class="fas fa-clipboard-list text-success"></i> Nature of Employment:</p>
+                                    <div class="d-flex flex-wrap gap-4 p-3 bg-light rounded-3 border mb-3">
+                                        <div class="form-check form-check-inline m-0">
+                                            <input class="form-check-input" type="radio" id="chckRegular" name="employment_type" value="Regular">
+                                            <label class="form-check-label fw-medium d-flex align-items-center gap-1" for="chckRegular"><i class="fas fa-check-circle text-success small"></i> Regular</label>
+                                        </div>
+                                        <div class="form-check form-check-inline m-0">
+                                            <input class="form-check-input" type="radio" id="chckProbationary" name="employment_type" value="Probationary">
+                                            <label class="form-check-label fw-medium d-flex align-items-center gap-1" for="chckProbationary"><i class="fas fa-clock text-warning small"></i> Probationary</label>
+                                        </div>
+                                        <div class="form-check form-check-inline m-0">
+                                            <input class="form-check-input" type="radio" id="chckSubcon" name="employment_type" value="Subcontractor">
+                                            <label class="form-check-label fw-medium d-flex align-items-center gap-1" for="chckSubcon"><i class="fas fa-handshake text-info small"></i> Subcontractor</label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-building text-secondary"></i> Department / Agency:</label>
+                                            <input type="text" class="form-control bg-white border-light-subtle shadow-none" id="txtEmployeeDepartmentAgency" name="employee_department_agency" placeholder="Employee Department / Agency" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-id-card text-secondary"></i> Position / Job Title</label>
+                                            <input type="text" class="form-control bg-white border-light-subtle shadow-none" id="txtEmployeePositionJobTitle" name="employee_position_job_title" placeholder="Employee Position / Job Title" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-layer-group text-secondary"></i> Section:</label>
+                                            <input type="text" class="form-control bg-white border-light-subtle shadow-none" id="txtEmployeeSection" name="employee_section" placeholder="Employee Section" readonly>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-sitemap text-secondary"></i> Division</label>
+                                            <input type="text" class="form-control bg-white border-light-subtle shadow-none" id="txtEmployeeDivision" name="employee_division" placeholder="Employee Division" readonly>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-comment-alt text-secondary"></i> Remarks:</label>
+                                            <textarea class="form-control border-light-subtle shadow-none" id="txtEmployeeRemarks" rows="3" name="remarks" placeholder="Enter Remarks"></textarea>
+                                        </div>
+                                    </div>
+                                    <hr class="text-muted opacity-25 my-4">
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-2 d-flex align-items-center gap-2" id="btnPrevStep2"><i class="fas fa-arrow-left fa-xs"></i> Previous</button>
+                                        <button type="button" class="btn btn-dark px-4 py-2 rounded-2 shadow-sm d-flex align-items-center gap-2" id="btnNextStep3">Next Step <i class="fas fa-arrow-right fa-xs"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- STEP 3 - INTERNET ACCESS -->
+                                <div id="step-3" class="tab-pane">
+                                    <input type="text" class="input_hidden" id="jsonInternetAccess" name="get_internet_access">
+                                    <p class="mb-2 fw-semibold text-secondary small text-uppercase d-flex align-items-center gap-1"><i class="fas fa-wifi text-info"></i> Internet Access Tier:</p>
+                                    <div class="d-flex flex-row flex-wrap gap-5 p-3 bg-light rounded-3 border mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="chckNoInternetAccess" name="internet_access" value="No Internet Access">
+                                            <label class="form-check-label fw-medium d-flex align-items-center gap-2" for="chckNoInternetAccess"><i class="fas fa-ban text-danger small"></i> No Internet Access</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="chckRestrictedInternetAccess" name="internet_access" value="R.I">
+                                            <label class="form-check-label fw-medium d-flex align-items-center gap-2" for="chckRestrictedInternetAccess"><i class="fas fa-shield-alt text-warning small"></i> Restricted Internet Access</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="chckLimitedInternetAccess" name="internet_access" value="Limited Internet Access">
+                                            <label class="form-check-label fw-medium d-flex align-items-center gap-2" for="chckLimitedInternetAccess"><i class="fas fa-sliders-h text-info small"></i> Limited Internet Access</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="chckOpenInternetAccess" name="internet_access" value="Open Internet Access">
+                                            <label class="form-check-label fw-medium d-flex align-items-center gap-2" for="chckOpenInternetAccess"><i class="fas fa-globe text-success small"></i> Open Internet Access</label>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-12">
+                                            <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-align-left text-secondary"></i> Justification:</label>
+                                            <textarea class="form-control border-light-subtle shadow-none" id="txtEmployeeJustification" name="justification" rows="3" placeholder="Enter Justification"></textarea>
+                                        </div>
+                                    </div>
+                                    <hr class="text-muted opacity-25 my-4">
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-2 d-flex align-items-center gap-2" id="btnPrevStep3"><i class="fas fa-arrow-left fa-xs"></i> Previous</button>
+                                        <button type="button" class="btn btn-dark px-4 py-2 rounded-2 shadow-sm d-flex align-items-center gap-2" id="btnNextStep4">Next Step <i class="fas fa-arrow-right fa-xs"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- STEP 4 - ACCOUNT ACCESS -->
+                                <div id="step-4" class="tab-pane">
+                                    <input type="text" class="input_hidden" id="jsonAccountSystemAccess" name="get_account_system_access">
+                                    <div class="p-3 bg-light rounded-3 border mb-3">
+                                        <div class="row g-3 align-items-end">
+                                            <div class="col-md-3 d-flex flex-column">
+                                                <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-desktop text-warning"></i> Account / System Name:</label>
+                                                <select class="form-select select2bs5 get_access border-light-subtle shadow-none" index="0" id="slctAccountSystemAccess" name="account_system_access">
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 d-flex flex-column">
+                                                <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-key text-warning"></i> Account / System Access:</label>
+                                                <select class="form-select select2bs5 get_access_details border-light-subtle shadow-none" id="slctAccountSystemName" name="account_system_name">
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4 d-flex flex-column">
+                                                <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-sticky-note text-warning"></i> Account / System Remark:</label>
+                                                <input type="text" class="form-control border-light-subtle shadow-none" id="txtAccountSystemRemark" name="account_system_remark" placeholder="Enter Remark">
+                                            </div>
+                                            <div class="col-md-2 d-flex">
+                                                <button type="button" class="btn btn-warning w-100 shadow-sm fw-semibold text-dark d-flex align-items-center justify-content-center gap-1" id="btnAddAccountAccess"><i class="fas fa-plus-circle"></i> Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-responsive border rounded-3">
+                                        <!-- <table id="tableAccountAccess" class="table table-hover align-middle mb-0 nowrap w-100"> -->
+                                        <table id="tableAccountAccess" class="table table-bordered table-striped table-hover align-middle nowrap w-100">
+                                            <thead class="table-light text-uppercase fs-7 text-secondary">
+                                                <tr>
+                                                    <th class="py-3 ps-3"><i class="fas fa-bolt me-1"></i> Action</th>
+                                                    <th class="py-3"><i class="fas fa-server me-1"></i> Account</th>
+                                                    <th class="py-3"><i class="fas fa-tag me-1"></i> Name</th>
+                                                    <th class="py-3"><i class="fas fa-comment me-1"></i> Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tableAccountAccessBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <hr class="text-muted opacity-25 my-4">
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-2 d-flex align-items-center gap-2" id="btnPrevStep4"><i class="fas fa-arrow-left fa-xs"></i> Previous</button>
+                                        <button type="button" class="btn btn-dark px-4 py-2 rounded-2 shadow-sm d-flex align-items-center gap-2" id="btnNextStep5">Next Step <i class="fas fa-arrow-right fa-xs"></i></button>
+                                    </div>
+                                </div>
+
+                                <!-- STEP 5 - NETWORK FOLDER ACCESS -->
+                                <div id="step-5" class="tab-pane">
+                                    <input type="text" class="input_hidden" id="jsonFolderAccess" name="get_folder_access">
+                                    <div class="p-3 bg-light rounded-3 border mb-3">
+                                        <div class="row g-3 align-items-end">
+                                            <div class="col-md-2 d-flex flex-column">
+                                                <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-folder text-danger"></i> Folder Access:</label>
+                                                <select class="form-select select2bs5 get_access border-light-subtle shadow-none" index="1" id="slctFolderAccess" name="folder_access">
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 d-flex flex-column">
+                                                <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-folder-open text-danger"></i> Folder Name:</label>
+                                                <select class="form-select select2bs5 get_access_details border-light-subtle shadow-none" id="slctFolderName" name="folder_name">
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3 d-flex flex-column">
+                                                <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-pen text-danger"></i> Folder Remark:</label>
+                                                <input type="text" class="form-control border-light-subtle shadow-none" id="txtFolderRemark" name="folder_remark" placeholder="Enter Remark">
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label class="fw-semibold form-label text-secondary small d-flex align-items-center gap-1"><i class="fas fa-lock text-danger"></i> Access Type:</label>
+                                                <select class="form-select border-light-subtle shadow-none" id="slctAccessTypeSelect" name="access_type">
+                                                    <option value="" selected disabled>-- Select --</option>
+                                                    <option value="Read Only">Read Only</option>
+                                                    <option value="Full Control">Full Control</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-danger w-100 shadow-sm fw-semibold d-flex align-items-center justify-content-center gap-1" id="btnAddFolderAccess"><i class="fas fa-plus-circle"></i> Add</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="table-responsive border rounded-3">
+                                        <!-- <table id="tableFolderAccess" class="table table-hover align-middle mb-0 nowrap w-100"> -->
+                                        <table id="tableFolderAccess" class="table table-bordered table-striped table-hover align-middle nowrap w-100">
+                                            <thead class="table-light text-uppercase fs-7 text-secondary">
+                                                <tr>
+                                                    <th class="py-3 ps-3"><i class="fas fa-bolt me-1"></i> Action</th>
+                                                    <th class="py-3"><i class="fas fa-folder me-1"></i> Folder Access</th>
+                                                    <th class="py-3"><i class="fas fa-folder-open me-1"></i> Folder Name</th>
+                                                    <th class="py-3"><i class="fas fa-shield-alt me-1"></i> Access Type</th>
+                                                    <th class="py-3"><i class="fas fa-comment me-1"></i> Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="tableFolderAccessBody">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <hr class="text-muted opacity-25 my-4">
+                                    <div class="d-flex justify-content-between mt-3">
+                                        <button type="button" class="btn btn-outline-secondary px-4 py-2 rounded-2 d-flex align-items-center gap-2" id="btnPrevStep5"><i class="fas fa-arrow-left fa-xs"></i> Previous</button>
+                                        <button type="submit" class="btn btn-success px-4 py-2 rounded-2 shadow-sm d-flex align-items-center gap-2 fw-semibold" id="btnPminaaRequest"> <i id="iBtnPminaaRequestIcon" class="fas fa-paper-plane"></i> Submit Request</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div><!-- Create/Update PMINAA Modal End -->
+
+    {{-- <!-- Create/Update PMINAA Modal Start -->
+    <div class="modal fade" id="modalCreateUpdatePminaaRequest" data-bs-keyboard="false" data-bs-backdrop="static">
         <div class="modal-dialog modal-xl-custom">
             <div class="modal-content">
                 <div class="modal-header">
@@ -443,7 +777,7 @@
                 </div>
             </div>
         </div>
-    </div><!-- Create/Update PMINAA Modal End -->
+    </div><!-- Create/Update PMINAA Modal End --> --}}
 
     <!-- Approval Modal Start -->
     <div class="modal fade" id="modalPminaaRequestApproval" data-bs-keyboard="false" data-bs-backdrop="static">
