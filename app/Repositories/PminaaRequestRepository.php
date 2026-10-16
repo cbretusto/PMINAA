@@ -3,7 +3,6 @@
 namespace App\Repositories;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\WelcomeMail;
-use App\Models\EmailLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 

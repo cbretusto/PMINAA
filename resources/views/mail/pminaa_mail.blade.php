@@ -199,35 +199,38 @@
                 @endif
 
                 @if (!empty($emailAccount))
-                    <div style="margin: 10px 0; padding: 14px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
-                        <div style="margin-bottom: 18px; color: #1e293b; font-size: 17px; font-weight: 600;">
-                            Email Account Credentials
-                        </div>
+                    @php
+                        $isPriconEmail = str_ends_with(
+                            strtolower($emailAccount['username'] ?? ''),
+                            '@pricon.ph'
+                        );
+                    @endphp
 
-                        <div style="padding: 24px; background: #f8fafc;">
-                            {{-- Username --}}
-                            <div style="margin-bottom: 14px; padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
-                                <div style="margin-bottom: 7px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Username
-                                </div>
-
-                                <div style="color: #0f172a; font-size: 15px; font-weight: 600; word-break: break-word;">
-                                    {{ $emailAccount['username'] ?? '' }}
-                                </div>
+                    @if ($isPriconEmail)
+                        <div style="margin: 10px 0; padding: 14px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px;">
+                            <div style="margin-bottom: 18px; color: #1e293b; font-size: 17px; font-weight: 600;">
+                                Email Account Credentials
                             </div>
 
-                            {{-- Password --}}
-                            {{-- <div style="padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
-                                <div style="margin-bottom: 7px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    Password
+                            <div style="padding: 24px; background: #f8fafc;">
+                                {{-- Username --}}
+                                <div style="margin-bottom: 14px; padding: 16px 18px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px;">
+                                    <div style="margin-bottom: 7px; color: #64748b; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                                        Username
+                                    </div>
+
+                                    <div style="color: #0f172a; font-size: 15px; font-weight: 600; word-break: break-word;">
+                                        {{ $emailAccount['username'] ?? '' }}
+                                    </div>
                                 </div>
 
-                                <div style="color: #0f172a; font-size: 15px; font-weight: 600; word-break: break-word;">
-                                    {{ $emailAccount['password'] ?? '' }}
+                                <div style="margin-top: 4px;">
+                                    <strong>📌 Note:</strong>
+                                    Kindly submit a support ticket and provide the computer name of the user requiring an email account setup. This will allow the IT team to verify the necessary details and proceed with the account configuration accordingly.
                                 </div>
-                            </div> --}}
+                            </div>
                         </div>
-                    </div>
+                    @endif
                 @endif
 
                 @if (!empty($pcAccount) || !empty($emailAccount))
