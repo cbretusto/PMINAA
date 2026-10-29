@@ -441,8 +441,7 @@ class PminaaRequestService
     public function viewPdfPminaaRequestService($ids){
         // return $this->pminaaRequestInterfaceInterface->viewPdfPminaaRequestRepository($id);
 
-        $data = $this->pminaaRequestInterfaceInterface
-        ->viewPdfPminaaRequestRepository($ids);
+        $data = $this->pminaaRequestInterfaceInterface->viewPdfPminaaRequestRepository($ids);
 
         $pdf = PDF::loadView('view_pdf_pminaa_request', [
             'data' => $data,

@@ -1,11 +1,9 @@
 const GetSystemOnePmiSubconEmployee = (element,userType) => {
     let result = '';
     const ajaxGetSystemOnePmiSubconEmployee = {
-        url: 'get_systemone_pmi_subcon_employee',
-        data: {
-            userType: userType
-        },
-        method: 'GET',
+        url     : 'get_systemone_pmi_subcon_employee',
+        data    :  { userType: userType },
+        method  : 'GET',
         successCallback: (response) => {
             let systemonePmiSubconEmployee = response['systemonePmiSubconEmployee']
 
@@ -29,12 +27,12 @@ const GetSystemOnePmiSubconEmployee = (element,userType) => {
 
 function GetEmployeeInfo(employeeNo,userType){
     const ajaxGetEmployeeInfo = {
-        url: 'get_employee_info',
-        method: 'GET',
-        data: {
-            employeeNo: employeeNo,
-            userType: userType
-        },
+        url     : 'get_employee_info',
+        method  : 'GET',
+        data    : {
+                    employeeNo: employeeNo,
+                    userType: userType
+                },
         successCallback: (response) => {
             let getEmployeeInfo = response['getEmployeeInfo']
 
@@ -67,8 +65,8 @@ function GetEmployeeInfo(employeeNo,userType){
 
 const GetPminaaApprover = (elements) => {
     const ajaxGetPminaaApprover = {
-        url: 'get_pminaa_approver',
-        method: 'GET',
+        url     : 'get_pminaa_approver',
+        method  : 'GET',
         successCallback: (response) => {
             const pminaaApprover = response['pminaaApprover'];
 
@@ -132,8 +130,8 @@ const GetPminaaApprover = (elements) => {
 
 const GetAccountFolderAccess = (elements) => {
     const ajaxGetAccountFolderAccess = {
-        url: 'get_account_system_folder_access',
-        method: 'GET',
+        url     : 'get_account_system_folder_access',
+        method  : 'GET',
         successCallback: (response) => {
             const accountSystemFolderAccess = response['accountSystemFolderAccess'];
 
@@ -174,12 +172,12 @@ const GetAccountFolderAccess = (elements) => {
 
 const GetAccountSystemFolderName = (elements, getAccess, getSystemModule) => {
     const ajax = {
-        url:    'get_account_system_folder_name',
-        data:   {
-                    getAccess: getAccess,
-                    getSystemModule: getSystemModule
-                },
-        method: 'GET',
+        url     : 'get_account_system_folder_name',
+        data    :   {
+                        getAccess: getAccess,
+                        getSystemModule: getSystemModule
+                    },
+        method  : 'GET',
 
         successCallback: (response) => {
             const data = response.accountSystemFolderName;
@@ -209,10 +207,10 @@ const GetAccountSystemFolderName = (elements, getAccess, getSystemModule) => {
 
 function CreateUpdatePminaaRequest() {
     const ajaxPminaaRequest = {
-        url: "create_update_pminaa_request",
-        method: "POST",
-        data: $('#formPminaaRequest').serialize(),
-        dataType: "json",
+        url         : "create_update_pminaa_request",
+        method      : "POST",
+        data        : $('#formPminaaRequest').serialize(),
+        dataType    : "json",
         beforeSendCallback: function(xhr) {
             $("#iBtnPminaaRequestIcon").addClass('spinner-border spinner-border-sm');
             $("#btnPminaaRequest").addClass('disabled');
@@ -250,9 +248,9 @@ function CreateUpdatePminaaRequest() {
 
 function GetPminaaRequestInfoByIdToEdit(pminaaId) {
     const ajaxGetPminaaRequestByIdToEdit = {
-        url: 'get_pminaa_request_info_by_id',
-        method: 'GET',
-        data: { pminaaId: pminaaId },
+        url     : 'get_pminaa_request_info_by_id',
+        method  : 'GET',
+        data    : { pminaaId: pminaaId },
         successCallback: (response) => {
             let pminaaRequestInfo = response['pminaaRequestInfo'];
 
@@ -334,10 +332,10 @@ function GetPminaaRequestInfoByIdToEdit(pminaaId) {
 
 function PminaaRequestChangeApprovalStatus(){
     const ajaxPminaaRequestChangeApprovalStatus = {
-        url: 'pminaa_request_change_approval_status',
-        method: "POST",
-        data: $('#formPminaaRequestApproval').serialize(),
-        dataType: "json",
+        url         : 'pminaa_request_change_approval_status',
+        method      : "POST",
+        data        : $('#formPminaaRequestApproval').serialize(),
+        dataType    : "json",
         beforeSendCallback: function(xhr) {
             $("#iBtnPminaaRequestApprovalIcon").addClass('spinner-border spinner-border-sm');
             $("#btnPminaaRequestApproval").addClass('disabled');
@@ -366,13 +364,12 @@ function PminaaRequestChangeApprovalStatus(){
 function ApproveAllPendingRequests(presidentApproval){
     const csrfToken = $('#btnApprovalPminaaRequest').data('csrf');
     const ajaxPminaaRequestChangeApprovalStatus = {
-        url: 'approve_all_pending_requests',
-        method: "POST",
-        data: {
-                presidentApproval: presidentApproval,
-                _token: csrfToken
-            },
-        dataType: "json",
+        url         : 'approve_all_pending_requests',
+        method      : "POST",
+        data        : { presidentApproval: presidentApproval,
+                            _token: csrfToken
+                        },
+        dataType    : "json",
         beforeSendCallback: function(xhr) {
             $("#iBtnApprovalPminaaRequestIcon").addClass('spinner-border spinner-border-sm');
             $("#btnApprovalPminaaRequest").addClass('disabled');
@@ -408,10 +405,10 @@ function ApproveAllPendingRequests(presidentApproval){
 
 function PminaaRequestUserAccount() {
     const ajaxPminaaRequestUserAccount = {
-        url: "pminaa_request_user_account",
-        method: "POST",
-        data: $('#formPminaaRequestUserAccount').serialize(),
-        dataType: "json",
+        url         : "pminaa_request_user_account",
+        method      : "POST",
+        data        : $('#formPminaaRequestUserAccount').serialize(),
+        dataType    : "json",
         beforeSendCallback: function(xhr) {
             $("#iBtnPminaaRequestUserAccountIcon").addClass('spinner-border spinner-border-sm');
             $("#btnSaveUserAccount").addClass('disabled');
