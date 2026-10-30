@@ -85,8 +85,8 @@ class PminaaRequestController extends Controller
         }
     }
 
-    public function viewPdfPminaaRequest($ids){
-        return $this->pminaaRequestServiceService->viewPdfPminaaRequestService($ids);
+    public function viewPdfPminaaRequest($ids, $checkAccount){
+        return $this->pminaaRequestServiceService->viewPdfPminaaRequestService($ids, $checkAccount);
     }
 
     public function approveAllPendingRequests(Request $request){

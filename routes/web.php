@@ -73,7 +73,7 @@ Route::controller(PminaaRequestController::class)->group(function () {
     Route::post('/create_update_pminaa_request', 'createUpdatePminaaRequest')->name('create_update_pminaa_request');
     Route::get('/get_pminaa_request_info_by_id', 'getPminaaRequestInfoById')->name('get_pminaa_request_info_by_id');
     Route::post('/pminaa_request_change_approval_status', 'pminaaRequestChangeApprovalStatus')->name('pminaa_request_change_approval_status');
-    Route::get('/view_pdf_pminaa_request/{id}', 'viewPdfPminaaRequest');
+    Route::get('/view_pdf_pminaa_request/{id}/{checkAccount}', 'viewPdfPminaaRequest');
     Route::post('/approve_all_pending_requests', 'approveAllPendingRequests')->name('approve_all_pending_requests');
     Route::post('/pminaa_request_user_account', 'pminaaRequestUserAccount')->name('pminaa_request_user_account');
     Route::get('/get_email_pc_account_details', 'getEmailPcAccountDetails')->name('get_email_pc_account_details');

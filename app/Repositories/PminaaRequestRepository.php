@@ -997,6 +997,16 @@ class PminaaRequestRepository implements PminaaRequestInterface
                 true
             );
 
+            $data['pc_account'] = json_decode(
+                $data['pc_account'] ?? '{}',
+                true
+            );
+
+            $data['email_account'] = json_decode(
+                $data['email_account'] ?? '{}',
+                true
+            );
+
             // ASC by accountSystemAccess
             if (!empty($data['account_system_access']['Details'])) {
                 usort(

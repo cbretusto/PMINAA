@@ -124,10 +124,16 @@ class PminaaRequestService
 
         return DataTables::of($pminaa_details)
             ->addColumn('action',function ($pminaa_detail) use ( $rapidx_user_id, $steps, $approve_values, $disapprove_values, $pminaa_access_for_conformance, $conformanceApprovalIds, $sameEmployeeRequests ){
+                    if($pminaa_detail->pc_account != '' || $pminaa_detail->email_account != ''){
+                        $checkAccount = 1;
+                    }else{
+                        $checkAccount = 0;
+                    }
+
                     $btns = '<center>';
                     $btns .= '
                         <a
-                            href="view_pdf_pminaa_request/' . $pminaa_detail->id . '"
+                            href="view_pdf_pminaa_request/' . $pminaa_detail->id . '/' . $checkAccount . '"
                             target="_blank"
                             class="btn btn-warning btn-sm mb-2 w-100"
                             title="View PMINAA Request">
@@ -263,7 +269,7 @@ class PminaaRequestService
                         $btns .= '<br>';
                         $btns .= '
                             <a
-                                href="view_pdf_pminaa_request/' . $employeeRequestIds . '"
+                                href="view_pdf_pminaa_request/' . $employeeRequestIds . '/' . $checkAccount . '"
                                 target="_blank"
                                 class="btn btn-dark btn-sm mb-2 w-100"
                                 title="View PMINAA Request History">

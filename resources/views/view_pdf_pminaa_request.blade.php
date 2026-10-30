@@ -1,3 +1,11 @@
+@php
+    session_start();
+    if (isset($_SESSION['pminaa_request_access_for_conformance'])){
+        $pminaaRequestAccessForConformance = $_SESSION['pminaa_request_access_for_conformance'];
+    }else{
+        $pminaaRequestAccessForConformance = '';
+    }
+@endphp
 <!DOCTYPE html>
 <html>
     <head>
@@ -442,272 +450,79 @@
                     </table>
                 @endif
             </div>
+
+            @if ($pminaaRequestAccessForConformance != '' && $pminaaRequestAccessForConformance != 0)
+                <!-- PC ACCOUNT -->
+                <div class="section">
+                    <div class="section-title">
+                        PC Account
+                    </div>
+
+                    @if (!empty($request['pc_account']['username']) || !empty($request['pc_account']['password']))
+                        <table class="data-table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">Username</th>
+                                    <th style="width: 50%;">Password</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        {{ $request['pc_account']['username'] ?? 'N/A' }}
+                                    </td>
+                                    <td>
+                                        {{ $request['pc_account']['password'] ?? 'N/A' }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    @else
+                        <table class="na-table" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>N/A</td>
+                            </tr>
+                        </table>
+                    @endif
+                </div>
+
+                <!-- EMAIL ACCOUNT -->
+                <div class="section">
+                    <div class="section-title">
+                        Email Account
+                    </div>
+
+                    @if (!empty($request['email_account']['username']) || !empty($request['email_account']['password']))
+                        <table class="data-table" cellpadding="0" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50%;">Username / Email Address</th>
+                                    <th style="width: 50%;">Password</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        {{ $request['email_account']['username'] ?? 'N/A' }}
+                                    </td>
+                                    <td>
+                                        {{ $request['email_account']['password'] ?? 'N/A' }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    @else
+                        <table class="na-table" cellpadding="0" cellspacing="0">
+                            <tr>
+                                <td>N/A</td>
+                            </tr>
+                        </table>
+                    @endif
+                </div>
+            @endif
         @endforeach
     </body>
-
-        {{-- <body>
-        <!-- =====================================================
-        ========================= HEADER =========================
-        ========================================================== -->
-        <table class="main-header" cellpadding="0" cellspacing="0">
-            <tr>
-                <td>
-                    PMI Network Account Activation
-                </td>
-            </tr>
-        </table>
-
-        <!-- =====================================================
-        ================== EMPLOYEE INFORMATION ==================
-        ========================================================== -->
-        <div class="employee-section">
-            <table class="employee-table" width="100%" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td class="employee-label">
-                        Control No.
-                    </td>
-                    <td>
-                        : {{ $data['control_no'] ?? 'N/A' }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="employee-label">
-                        Employee No.
-                    </td>
-                    <td>
-                        : {{ $data['employee_no'] ?? 'N/A' }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="employee-label">
-                        Employee Name
-                    </td>
-                    <td>
-                        :
-                        {{ $data['employee_lastname'] ?? '' }},
-                        {{ $data['employee_name'] ?? '' }}
-
-                        @if (!empty($data['employee_middlename']))
-                            {{ substr($data['employee_middlename'], 0, 1) }}.
-                        @endif
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="employee-label">
-                        User Type
-                    </td>
-                    <td>
-                        : {{ $data['user_type'] ?? 'N/A' }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="employee-label">
-                        Nature of Employment
-                    </td>
-                    <td>
-                        : {{ $data['nature_of_employment'] ?? 'N/A' }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="employee-label">
-                        Position
-                    </td>
-                    <td>
-                        : {{ $data['position_job_title'] ?? 'N/A' }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="employee-label">
-                        Department / Agency
-                    </td>
-                    <td>
-                        : {{ $data['department_agency'] ?? 'N/A' }}
-                    </td>
-                </tr>
-
-                <tr>
-                    <td class="employee-label">
-                        Remarks
-                    </td>
-                    <td>
-                        : {{ $data['remarks'] ?? 'N/A' }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-
-        <!-- =====================================================
-        ==================== INTERNET ACCESS =====================
-        ========================================================== -->
-        <div class="section">
-            <div class="section-title">
-                Internet Access
-            </div>
-
-            <table class="justification-table" cellpadding="0" cellspacing="0">
-                <tr>
-                    <td class="justification-label">
-                        Justification
-                    </td>
-                    <td>
-                        {{ $data['internet_access']['Justification'] ?? 'N/A' }}
-                    </td>
-                </tr>
-            </table>
-
-            @if (!empty($data['internet_access']['Details']))
-                <table class="data-table" cellpadding="0" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th style="width: 100%;">
-                                Details
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach ($data['internet_access']['Details'] as $item)
-                            <tr>
-                                <td>
-                                    {{ $item }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <table class="na-table" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td>
-                            N/A
-                        </td>
-                    </tr>
-                </table>
-            @endif
-        </div>
-
-
-        <!-- =====================================================
-        ================ ACCOUNT / SYSTEM ACCESS =================
-        ========================================================== -->
-        <div class="section">
-            <div class="section-title">
-                Account / System Access
-            </div>
-
-            @if (!empty($data['account_system_access']['Details']))
-                <table class="data-table" cellpadding="0" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th style="width: 30%;">
-                                Access Type
-                            </th>
-
-                            <th style="width: 30%;">
-                                Account Name
-                            </th>
-
-                            <th style="width: 40%;">
-                                Remarks
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach ($data['account_system_access']['Details'] as $account)
-                            <tr>
-                                <td>
-                                    {{ $account['accountSystemAccess'] ?? 'N/A' }}
-                                </td>
-                                <td>
-                                    {{ $account['accountSystemName'] ?? 'N/A' }}
-                                </td>
-                                <td>
-                                    {{ $account['remark'] ?? 'N/A' }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <table class="na-table" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td>
-                            N/A
-                        </td>
-                    </tr>
-                </table>
-            @endif
-        </div>
-
-        <!-- =====================================================
-        ================= NETWORK FOLDER ACCESS ==================
-        ========================================================== -->
-        <div class="section">
-            <div class="section-title">
-                Network Folder Access
-            </div>
-
-            @if (!empty($data['network_folder_access']['Details']))
-                <table class="data-table" cellpadding="0" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th style="width: 20%;">
-                                Folder Access
-                            </th>
-
-                            <th style="width: 30%;">
-                                Folder Name
-                            </th>
-
-                            <th style="width: 20%;">
-                                Access Type
-                            </th>
-
-                            <th style="width: 30%;">
-                                Remarks
-                            </th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @foreach ($data['network_folder_access']['Details'] as $folder)
-                            <tr>
-                                <td>
-                                    {{ $folder['folder_access'] ?? 'N/A' }}
-                                </td>
-
-                                <td>
-                                    {{ $folder['folder_name'] ?? 'N/A' }}
-                                </td>
-
-                                <td>
-                                    {{ $folder['access_type'] ?? 'N/A' }}
-                                </td>
-
-                                <td>
-                                    {{ $folder['remark'] ?? 'N/A' }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            @else
-                <table class="na-table" cellpadding="0" cellspacing="0">
-                    <tr>
-                        <td>
-                            N/A
-                        </td>
-                    </tr>
-                </table>
-            @endif
-        </div>
-    </body> --}}
 
 </html>
