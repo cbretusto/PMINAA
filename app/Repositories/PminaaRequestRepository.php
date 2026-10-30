@@ -1070,5 +1070,11 @@ class PminaaRequestRepository implements PminaaRequestInterface
         ];
     }
 
+    public function getEmailPcAccountDetailRepository($pminaaId){
+        return PminaaDetails::where('id', $pminaaId)
+            ->where('status', 0)
+            ->where('logdel', 0)
+            ->get();
+    }
 }
 

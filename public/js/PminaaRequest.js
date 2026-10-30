@@ -441,3 +441,39 @@ function PminaaRequestUserAccount() {
 
     ajaxRequest(ajaxPminaaRequestUserAccount);
 }
+
+function GetEmailPcAccountDetails(pminaaId) {
+    const ajaxGetEmailPcAccountDetails = {
+        url     : 'get_email_pc_account_details',
+        method  : 'GET',
+        data    : { pminaaId: pminaaId },
+        successCallback: (response) => {
+            let pminaaEmailPcAccountDetails = response['pminaaEmailPcAccountDetails'];
+
+            if (pminaaEmailPcAccountDetails.length > 0) {
+                const data = pminaaEmailPcAccountDetails[0];
+                console.log('data: ', data);
+
+                if(data.pc_account != ''){
+                    const pcAccountAccess = JSON.parse(data.pc_account);
+                    console.log('pcAccountAccess: ', pcAccountAccess);
+
+                    $('#pcUsername').val(pcAccountAccess.username);
+                    $('#pcPassword').val(pcAccountAccess.password);
+                }
+
+                if(data.email_account != ''){
+                    const emailAccountAccess = JSON.parse(data.email_account);
+                    console.log('emailAccountAccess: ', emailAccountAccess);
+                    $('#emailUsername').val(emailAccountAccess.username);
+                    $('#emailPassword').val(emailAccountAccess.password);
+                }
+            }
+        },
+        errorCallback: () => {
+            console.error("Failed to fetch PMINAA request info.");
+        }
+    };
+
+    ajaxRequest(ajaxGetEmailPcAccountDetails);
+}

@@ -860,7 +860,7 @@
                                     <div class="card-body">
                                         <!-- Username -->
                                         <div class="mb-3">
-                                            <label for="pc_username" class="form-label fw-semibold">
+                                            <label for="pcUsername" class="form-label fw-semibold">
                                                 Username
                                             </label>
 
@@ -869,13 +869,13 @@
                                                     <i class="fa-solid fa-user text-muted"></i>
                                                 </span>
 
-                                                <input type="text" class="form-control" id="pc_username" name="pc_username" placeholder="Enter username" autocomplete="off" required>
+                                                <input type="text" class="form-control" id="pcUsername" name="pc_username" placeholder="Enter username" autocomplete="off" required>
                                             </div>
                                         </div>
 
                                         <!-- Password -->
                                         <div>
-                                            <label for="pc_password" class="form-label fw-semibold">
+                                            <label for="pcPassword" class="form-label fw-semibold">
                                                 Password
                                             </label>
 
@@ -884,7 +884,7 @@
                                                     <i class="fa-solid fa-lock text-muted"></i>
                                                 </span>
 
-                                                <input type="text" class="form-control" id="pc_password" name="pc_password" placeholder="Enter password" autocomplete="new-password" required>
+                                                <input type="text" class="form-control" id="pcPassword" name="pc_password" placeholder="Enter password" autocomplete="new-password" required>
                                             </div>
                                         </div>
                                     </div>
@@ -915,7 +915,7 @@
                                     <div class="card-body">
                                         <!-- Username -->
                                         <div class="mb-3">
-                                            <label for="email_username" class="form-label fw-semibold">
+                                            <label for="emailUsername" class="form-label fw-semibold">
                                                 Username
                                             </label>
 
@@ -924,14 +924,14 @@
                                                     <i class="fa-solid fa-user text-muted"></i>
                                                 </span>
 
-                                                <input type="text" class="form-control" id="email_username" name="email_username" placeholder="Enter email username" autocomplete="off" required>
+                                                <input type="text" class="form-control" id="emailUsername" name="email_username" placeholder="Enter email username" autocomplete="off" required>
                                             </div>
                                         </div>
 
                                         <!-- Password -->
                                         <div>
                                             <label
-                                                for="email_password"
+                                                for="emailPassword"
                                                 class="form-label fw-semibold">
                                                 Password
                                             </label>
@@ -941,7 +941,7 @@
                                                     <i class="fa-solid fa-lock text-muted"></i>
                                                 </span>
 
-                                                <input type="text" class="form-control" id="email_password" name="email_password" placeholder="Enter email password" autocomplete="new-password" required>
+                                                <input type="text" class="form-control" id="emailPassword" name="email_password" placeholder="Enter email password" autocomplete="new-password" required>
                                             </div>
                                         </div>
                                     </div>
@@ -1700,6 +1700,8 @@
             $(document).on('click', '.actionPminaaRequestUserAccountButton', function(){
                 pminaaId = $(this).attr('pminaa_details-id');
                 $("#getPminaaId").val(pminaaId);
+
+                GetEmailPcAccountDetails(pminaaId);
             });
 
             $("#formPminaaRequestUserAccount").submit(function(event){

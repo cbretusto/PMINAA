@@ -18,4 +18,5 @@ interface PminaaRequestInterface
     public function viewPdfPminaaRequestRepository($id);
     public function approveAllPendingRequestsRepository($presidentApproval);
     public function findSameEmployeeRequestsRepository($findUser);
+    public function getEmailPcAccountDetailRepository($pminaaId);
 }

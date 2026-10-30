@@ -76,4 +76,5 @@ Route::controller(PminaaRequestController::class)->group(function () {
     Route::get('/view_pdf_pminaa_request/{id}', 'viewPdfPminaaRequest');
     Route::post('/approve_all_pending_requests', 'approveAllPendingRequests')->name('approve_all_pending_requests');
     Route::post('/pminaa_request_user_account', 'pminaaRequestUserAccount')->name('pminaa_request_user_account');
+    Route::get('/get_email_pc_account_details', 'getEmailPcAccountDetails')->name('get_email_pc_account_details');
 });

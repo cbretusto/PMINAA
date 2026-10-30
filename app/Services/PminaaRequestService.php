@@ -205,7 +205,7 @@ class PminaaRequestService
                             $btns .= '
                                 <button
                                     type="button"
-                                    class="btn btn-danger btn-sm actionPminaaRequestApprovalButton w-100"
+                                    class="btn btn-danger btn-sm actionPminaaRequestApprovalButton w-100 mb-2"
                                     pminaa_details-id="' . $pminaa_detail->id . '"
                                     pminaa_details-approval_status="' . $currentStepKey . '"
                                     approval-status="' . $disapproveVal . '"
@@ -216,6 +216,20 @@ class PminaaRequestService
                                     <i class="fa-solid fa-thumbs-down"></i>
                                 </button>
                             ';
+
+                            if($pminaa_detail->pc_account != '' || $pminaa_detail->email_account != ''){
+                                $btns .= '
+                                    <button
+                                        type="button"
+                                        class="btn btn-dark btn-sm w-100 actionPminaaRequestUserAccountButton"
+                                        pminaa_details-id="' . $pminaa_detail->id . '"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#modalPminaaRequestUserAccount"
+                                        title="User Account">
+                                        <i class="fa-solid fa-user"></i>
+                                    </button>
+                                ';
+                            }
                         }else{
                             if($forUserAccountCredentials && $canConform){
                                 $btns .= '
@@ -464,5 +478,9 @@ class PminaaRequestService
             ];
 
         }, 5);
+    }
+
+    public function getEmailPcAccountDetailService($pminaaId){
+        return $this->pminaaRequestInterfaceInterface->getEmailPcAccountDetailRepository($pminaaId);
     }
 }

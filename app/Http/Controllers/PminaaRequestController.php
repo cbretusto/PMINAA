@@ -105,4 +105,10 @@ class PminaaRequestController extends Controller
             'exceptionError' => $result['exceptionError'] ?? 'An unknown error occurred.',
         ], 500);
     }
+
+    public function getEmailPcAccountDetails(Request $request){
+        $pminaaId = $request->pminaaId;
+        $pminaaEmailPcAccountDetails = $this->pminaaRequestServiceService->getEmailPcAccountDetailService($pminaaId);
+        return response()->json(['pminaaEmailPcAccountDetails' => $pminaaEmailPcAccountDetails]);
+    }
 }
