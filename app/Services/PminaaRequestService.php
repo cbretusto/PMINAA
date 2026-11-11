@@ -292,6 +292,7 @@ class PminaaRequestService
             ->addColumn('full_name', function ($pminaa_detail) {
                 return trim(
                     ($pminaa_detail->employee_name ?? '') . ' ' .
+                    ($pminaa_detail->employee_middlename ? substr($pminaa_detail->employee_middlename, 0, 1) . '.' : '') . ' ' .
                     ($pminaa_detail->employee_lastname ?? '')
                 );
             })
